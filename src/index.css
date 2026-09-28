@@ -1,0 +1,19 @@
+@import 'tailwindcss';
+
+/* Dark mode គ្រប់គ្រងដោយ class "dark" លើ <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 transition-colors;
+    @apply dark:bg-slate-900 dark:text-slate-100;
+  }
+}
