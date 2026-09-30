@@ -8,6 +8,11 @@ export function getGoalProgress(goal) {
   return Math.min(100, Math.max(0, Math.round(percent)));
 }
 
+export function getRemainingAmount(goal) {
+  const remaining = goal.targetAmount - goal.currentAmount;
+  return Math.max(0, remaining);
+}
+
 export function filterGoals(goals, filter) {
   switch (filter) {
     case 'in-progress':
