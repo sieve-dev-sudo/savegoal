@@ -1,8 +1,8 @@
-import { Pencil, Trash2, CheckCircle2 } from 'lucide-react';
+import { Pencil, Trash2, CheckCircle2, Wallet } from 'lucide-react';
 import { getGoalProgress, isGoalCompleted } from '../utils/goalStatus';
 import { CATEGORIES } from '../constants/categories';
 
-function GoalCard({ goal, onEdit, onDelete }) {
+function GoalCard({ goal, onEdit, onDelete, onTransact }) {
   const progress = getGoalProgress(goal);
   const completed = isGoalCompleted(goal);
   const categoryLabel =
@@ -30,6 +30,14 @@ function GoalCard({ goal, onEdit, onDelete }) {
         </div>
 
         <div className="flex shrink-0 gap-1">
+          <button
+            type="button"
+            onClick={() => onTransact(goal)}
+            aria-label={`Deposit or withdraw for ${goal.name}`}
+            className="rounded-lg p-2 text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/30"
+          >
+            <Wallet className="h-4 w-4" />
+          </button>
           <button
             type="button"
             onClick={() => onEdit(goal)}

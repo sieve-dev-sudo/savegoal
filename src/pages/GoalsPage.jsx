@@ -1,17 +1,29 @@
 import { useState, useMemo } from 'react';
 import { Plus } from 'lucide-react';
 import { useGoals } from '../context/GoalContext';
+import { useToast } from '../context/ToastContext';
 import GoalFormModal from '../components/GoalFormModal';
 import ConfirmDialog from '../components/ConfirmDialog';
 import GoalFilterTabs from '../components/GoalFilterTabs';
 import GoalCard from '../components/GoalCard';
+import DepositWithdrawModal from '../components/DepositWithdrawModal';
 import { filterGoals, isGoalCompleted } from '../utils/goalStatus';
 
 function GoalsPage() {
-  const { goals, addGoal, editGoal, deleteGoal } = useGoals();
+  const {
+    goals,
+    addGoal,
+    editGoal,
+    deleteGoal,
+    depositToGoal,
+    withdrawFromGoal,
+  } = useGoals();
+  const { showToast } = useToast();
+
   const [showForm, setShowForm] = useState(false);
   const [editingGoal, setEditingGoal] = useState(null);
   const [deletingGoal, setDeletingGoal] = useState(null);
+  const [transactingGoal, setTransactingGoal] = useState(null);
   const [activeFilter, setActiveFilter] = useState('all');
 
   const counts = useMemo(
@@ -41,8 +53,10 @@ function GoalsPage() {
   const handleSave = (formData) => {
     if (editingGoal) {
       editGoal(editingGoal.id, formData);
+      showToast('បានកែ Goal ជោគជ័យ', 'success');
     } else {
       addGoal(formData);
+      showToast('បានបង្កើត Goal ជោគជ័យ', 'success');
     }
     setShowForm(false);
     setEditingGoal(null);
@@ -50,7 +64,23 @@ function GoalsPage() {
 
   const handleConfirmDelete = () => {
     deleteGoal(deletingGoal.id);
+    showToast('បានលុប Goal', 'success');
     setDeletingGoal(null);
+  };
+
+  const handleDeposit = (amount, note) => {
+    depositToGoal(transactingGoal.id, amount, note);
+    showToast(
+      `បានបញ្ចូលប្រាក់ ${amount} ${transactingGoal.currency}`,
+      'success'
+    );
+    setTransactingGoal(null);
+  };
+
+  const handleWithdraw = (amount, note) => {
+    withdrawFromGoal(transactingGoal.id, amount, note);
+    showToast(`បានដកប្រាក់ ${amount} ${transactingGoal.currency}`, 'success');
+    setTransactingGoal(null);
   };
 
   return (
@@ -91,6 +121,7 @@ function GoalsPage() {
               goal={goal}
               onEdit={handleOpenEdit}
               onDelete={setDeletingGoal}
+              onTransact={setTransactingGoal}
             />
           ))}
         </ul>
@@ -113,6 +144,15 @@ function GoalsPage() {
           message={`តើអ្នកប្រាកដថាចង់លុប "${deletingGoal.name}" មែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។`}
           onConfirm={handleConfirmDelete}
           onCancel={() => setDeletingGoal(null)}
+        />
+      )}
+
+      {transactingGoal && (
+        <DepositWithdrawModal
+          goal={transactingGoal}
+          onDeposit={handleDeposit}
+          onWithdraw={handleWithdraw}
+          onClose={() => setTransactingGoal(null)}
         />
       )}
     </section>

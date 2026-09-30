@@ -1,5 +1,6 @@
 import Header from './Header';
 import Nav from './Nav';
+import ToastContainer from './ToastContainer';
 
 function Layout({ currentPage, onNavigate, children }) {
   return (
@@ -9,6 +10,7 @@ function Layout({ currentPage, onNavigate, children }) {
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6">
         {children}
       </main>
+      <ToastContainer />
     </div>
   );
 }
