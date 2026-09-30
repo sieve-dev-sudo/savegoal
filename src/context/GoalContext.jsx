@@ -1,11 +1,25 @@
-import { createContext, useContext, useReducer, useCallback } from 'react';
+import {
+  createContext,
+  useContext,
+  useReducer,
+  useCallback,
+  useEffect,
+} from 'react';
 import { generateId } from '../utils/id';
 
 const GoalContext = createContext(null);
 
-const initialState = {
-  goals: [],
-};
+const STORAGE_KEY = 'savegoal:goals';
+
+function loadInitialGoals() {
+  try {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.error('Error reading goals from localStorage:', error);
+    return [];
+  }
+}
 
 function goalReducer(state, action) {
   switch (action.type) {
@@ -78,7 +92,17 @@ function goalReducer(state, action) {
 }
 
 export function GoalProvider({ children }) {
-  const [state, dispatch] = useReducer(goalReducer, initialState);
+  const [state, dispatch] = useReducer(goalReducer, null, () => ({
+    goals: loadInitialGoals(),
+  }));
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state.goals));
+    } catch (error) {
+      console.error('Error writing goals to localStorage:', error);
+    }
+  }, [state.goals]);
 
   const addGoal = useCallback((goalData) => {
     const newGoal = {
