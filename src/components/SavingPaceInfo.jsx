@@ -1,5 +1,6 @@
 import { TrendingUp } from 'lucide-react';
 import { getSavingPace, isGoalCompleted } from '../utils/goalStatus';
+import { formatCurrency } from '../utils/currency';
 
 function SavingPaceInfo({ goal }) {
   const pace = getSavingPace(goal);
@@ -7,14 +8,13 @@ function SavingPaceInfo({ goal }) {
 
   if (completed || !pace) return null;
 
-  // ជ្រើសរើសឯកតាបង្ហាញសមស្របតាមចំនួនថ្ងៃនៅសល់
   let label;
   if (pace.daysRemaining <= 10) {
-    label = `${pace.perDay} ${goal.currency}/ថ្ងៃ`;
+    label = `${formatCurrency(pace.perDay, goal.currency)}/ថ្ងៃ`;
   } else if (pace.daysRemaining <= 45) {
-    label = `${pace.perWeek} ${goal.currency}/សប្តាហ៍`;
+    label = `${formatCurrency(pace.perWeek, goal.currency)}/សប្តាហ៍`;
   } else {
-    label = `${pace.perMonth} ${goal.currency}/ខែ`;
+    label = `${formatCurrency(pace.perMonth, goal.currency)}/ខែ`;
   }
 
   return (
