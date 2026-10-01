@@ -1,4 +1,11 @@
-import { Pencil, Trash2, CheckCircle2, Wallet, Calendar } from 'lucide-react';
+import {
+  Pencil,
+  Trash2,
+  CheckCircle2,
+  Wallet,
+  Calendar,
+  History,
+} from 'lucide-react';
 import {
   getGoalProgress,
   isGoalCompleted,
@@ -8,7 +15,7 @@ import { formatDeadlineLabel, getDaysRemaining } from '../utils/date';
 import { CATEGORIES } from '../constants/categories';
 import ProgressBar from './ProgressBar';
 
-function GoalCard({ goal, onEdit, onDelete, onTransact }) {
+function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
   const progress = getGoalProgress(goal);
   const completed = isGoalCompleted(goal);
   const remaining = getRemainingAmount(goal);
@@ -55,6 +62,14 @@ function GoalCard({ goal, onEdit, onDelete, onTransact }) {
         </div>
 
         <div className="flex shrink-0 gap-1">
+          <button
+            type="button"
+            onClick={() => onViewHistory(goal)}
+            aria-label={`View transaction history for ${goal.name}`}
+            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700"
+          >
+            <History className="h-4 w-4" />
+          </button>
           <button
             type="button"
             onClick={() => onTransact(goal)}
