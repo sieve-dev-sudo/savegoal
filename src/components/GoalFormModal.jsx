@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Check } from 'lucide-react';
 import { CATEGORIES, CURRENCIES } from '../constants/categories';
+import { CATEGORY_COLOR_CLASSES } from '../constants/categoryColors';
 
 function GoalFormModal({ initialData, onSave, onClose }) {
   const isEditing = Boolean(initialData);
@@ -58,7 +59,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-xl bg-white p-5 shadow-xl dark:bg-slate-800"
+        className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-xl bg-white p-5 shadow-xl dark:bg-slate-800"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
@@ -144,24 +145,34 @@ function GoalFormModal({ initialData, onSave, onClose }) {
           </div>
 
           <div>
-            <label
-              htmlFor="goal-category"
-              className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
-            >
+            <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
               ប្រភេទ
-            </label>
-            <select
-              id="goal-category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
-            >
-              {CATEGORIES.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
+            </span>
+            <div className="grid grid-cols-3 gap-2">
+              {CATEGORIES.map((c) => {
+                const Icon = c.icon;
+                const colors = CATEGORY_COLOR_CLASSES[c.color];
+                const active = category === c.id;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setCategory(c.id)}
+                    className={`relative flex flex-col items-center gap-1 rounded-lg border p-2.5 text-xs transition-colors ${
+                      active
+                        ? `border-transparent ${colors.bg} ${colors.text} ring-2 ring-indigo-500`
+                        : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700'
+                    }`}
+                  >
+                    {active && (
+                      <Check className="absolute right-1 top-1 h-3 w-3" />
+                    )}
+                    <Icon className={`h-4 w-4 ${active ? colors.icon : ''}`} />
+                    <span className="text-center leading-tight">{c.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div>
