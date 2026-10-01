@@ -14,6 +14,7 @@ import {
 import { formatDeadlineLabel, getDaysRemaining } from '../utils/date';
 import ProgressBar from './ProgressBar';
 import CategoryBadge from './CategoryBadge';
+import SavingPaceInfo from './SavingPaceInfo';
 
 function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
   const progress = getGoalProgress(goal);
@@ -114,6 +115,8 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
             ? 'បានសន្សំគ្រប់ចំនួនហើយ! 🎉'
             : `នៅសល់ ${remaining} ${goal.currency} ត្រូវសន្សំបន្ថែម`}
         </p>
+
+        <SavingPaceInfo goal={goal} />
       </div>
     </li>
   );
