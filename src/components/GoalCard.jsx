@@ -12,15 +12,13 @@ import {
   getRemainingAmount,
 } from '../utils/goalStatus';
 import { formatDeadlineLabel, getDaysRemaining } from '../utils/date';
-import { CATEGORIES } from '../constants/categories';
 import ProgressBar from './ProgressBar';
+import CategoryBadge from './CategoryBadge';
 
 function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
   const progress = getGoalProgress(goal);
   const completed = isGoalCompleted(goal);
   const remaining = getRemainingAmount(goal);
-  const categoryLabel =
-    CATEGORIES.find((c) => c.id === goal.category)?.label || goal.category;
 
   const deadlineLabel = formatDeadlineLabel(goal.deadline);
   const daysRemaining = getDaysRemaining(goal.deadline);
@@ -46,12 +44,14 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
               </span>
             )}
           </div>
-          <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm text-slate-500 dark:text-slate-400">
-            <span>{categoryLabel}</span>
+          <div className="mt-1.5 flex flex-wrap items-center gap-2">
+            <CategoryBadge categoryId={goal.category} />
             {deadlineLabel && (
               <span
-                className={`flex items-center gap-1 ${
-                  isOverdue ? 'font-medium text-red-500' : ''
+                className={`flex items-center gap-1 text-sm ${
+                  isOverdue
+                    ? 'font-medium text-red-500'
+                    : 'text-slate-500 dark:text-slate-400'
                 }`}
               >
                 <Calendar className="h-3.5 w-3.5" />
