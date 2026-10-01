@@ -12,6 +12,7 @@ import {
   getRemainingAmount,
 } from '../utils/goalStatus';
 import { formatDeadlineLabel, getDaysRemaining } from '../utils/date';
+import { formatCurrency } from '../utils/currency';
 import ProgressBar from './ProgressBar';
 import CategoryBadge from './CategoryBadge';
 import SavingPaceInfo from './SavingPaceInfo';
@@ -101,7 +102,8 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
       <div className="mt-3">
         <div className="mb-1 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
           <span>
-            {goal.currentAmount} / {goal.targetAmount} {goal.currency}
+            {formatCurrency(goal.currentAmount, goal.currency)} /{' '}
+            {formatCurrency(goal.targetAmount, goal.currency)}
           </span>
           <span className="font-medium text-slate-700 dark:text-slate-300">
             {progress}%
@@ -113,7 +115,7 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
         <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
           {completed
             ? 'បានសន្សំគ្រប់ចំនួនហើយ! 🎉'
-            : `នៅសល់ ${remaining} ${goal.currency} ត្រូវសន្សំបន្ថែម`}
+            : `នៅសល់ ${formatCurrency(remaining, goal.currency)} ត្រូវសន្សំបន្ថែម`}
         </p>
 
         <SavingPaceInfo goal={goal} />

@@ -1,5 +1,6 @@
 import { X, ArrowDownCircle, ArrowUpCircle, Inbox } from 'lucide-react';
 import { formatDateTime } from '../utils/date';
+import { formatCurrency } from '../utils/currency';
 
 function TransactionHistoryModal({ goal, onClose }) {
   const transactions = goal.transactions || [];
@@ -71,7 +72,7 @@ function TransactionHistoryModal({ goal, onClose }) {
                         }`}
                       >
                         {isDeposit ? '+' : '−'}
-                        {tx.amount} {goal.currency}
+                        {formatCurrency(tx.amount, goal.currency)}
                       </span>
                       <span className="shrink-0 text-xs text-slate-400 dark:text-slate-500">
                         {formatDateTime(tx.date)}

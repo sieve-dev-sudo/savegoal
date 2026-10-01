@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { X, ArrowDownCircle, ArrowUpCircle } from 'lucide-react';
+import { formatCurrency, CURRENCY_SYMBOLS } from '../utils/currency';
 
 function DepositWithdrawModal({ goal, onDeposit, onWithdraw, onClose }) {
   const [mode, setMode] = useState('deposit');
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
   const [error, setError] = useState('');
+
+  const symbol = CURRENCY_SYMBOLS[goal.currency] || '';
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -52,8 +55,8 @@ function DepositWithdrawModal({ goal, onDeposit, onWithdraw, onClose }) {
         </div>
 
         <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
-          បច្ចុប្បន្ន: {goal.currentAmount} / {goal.targetAmount}{' '}
-          {goal.currency}
+          បច្ចុប្បន្ន: {formatCurrency(goal.currentAmount, goal.currency)} /{' '}
+          {formatCurrency(goal.targetAmount, goal.currency)}
         </p>
 
         <div className="mb-4 flex gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-700">
@@ -95,7 +98,7 @@ function DepositWithdrawModal({ goal, onDeposit, onWithdraw, onClose }) {
               htmlFor="tx-amount"
               className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
             >
-              ចំនួនទឹកប្រាក់
+              ចំនួនទឹកប្រាក់ ({symbol})
             </label>
             <input
               id="tx-amount"

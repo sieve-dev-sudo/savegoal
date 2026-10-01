@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Check } from 'lucide-react';
 import { CATEGORIES, CURRENCIES } from '../constants/categories';
 import { CATEGORY_COLOR_CLASSES } from '../constants/categoryColors';
+import { CURRENCY_SYMBOLS } from '../utils/currency';
 
 function GoalFormModal({ initialData, onSave, onClose }) {
   const isEditing = Boolean(initialData);
@@ -103,7 +104,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
                 htmlFor="goal-amount"
                 className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
               >
-                ចំនួនគោលដៅ
+                ចំនួនគោលដៅ ({CURRENCY_SYMBOLS[currency]})
               </label>
               <input
                 id="goal-amount"
