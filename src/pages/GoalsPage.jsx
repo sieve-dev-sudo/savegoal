@@ -7,6 +7,7 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import GoalFilterTabs from '../components/GoalFilterTabs';
 import GoalCard from '../components/GoalCard';
 import DepositWithdrawModal from '../components/DepositWithdrawModal';
+import TransactionHistoryModal from '../components/TransactionHistoryModal';
 import { filterGoals, isGoalCompleted } from '../utils/goalStatus';
 
 function GoalsPage() {
@@ -24,6 +25,7 @@ function GoalsPage() {
   const [editingGoal, setEditingGoal] = useState(null);
   const [deletingGoal, setDeletingGoal] = useState(null);
   const [transactingGoal, setTransactingGoal] = useState(null);
+  const [historyGoalId, setHistoryGoalId] = useState(null);
   const [activeFilter, setActiveFilter] = useState('all');
 
   const counts = useMemo(
@@ -39,6 +41,9 @@ function GoalsPage() {
     () => filterGoals(goals, activeFilter),
     [goals, activeFilter]
   );
+
+  // ប្រើ id រក goal ថ្មីជានិច្ច ដើម្បីឱ្យប្រវត្តិ update ភ្លាមៗពេល deposit/withdraw
+  const historyGoal = goals.find((g) => g.id === historyGoalId) || null;
 
   const handleOpenAdd = () => {
     setEditingGoal(null);
@@ -122,6 +127,7 @@ function GoalsPage() {
               onEdit={handleOpenEdit}
               onDelete={setDeletingGoal}
               onTransact={setTransactingGoal}
+              onViewHistory={(g) => setHistoryGoalId(g.id)}
             />
           ))}
         </ul>
@@ -153,6 +159,13 @@ function GoalsPage() {
           onDeposit={handleDeposit}
           onWithdraw={handleWithdraw}
           onClose={() => setTransactingGoal(null)}
+        />
+      )}
+
+      {historyGoal && (
+        <TransactionHistoryModal
+          goal={historyGoal}
+          onClose={() => setHistoryGoalId(null)}
         />
       )}
     </section>
