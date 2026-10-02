@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { useGoals } from '../context/GoalContext';
 import { useToast } from '../context/ToastContext';
@@ -9,6 +10,7 @@ import GoalCard from '../components/GoalCard';
 import DepositWithdrawModal from '../components/DepositWithdrawModal';
 import TransactionHistoryModal from '../components/TransactionHistoryModal';
 import { filterGoals, isGoalCompleted } from '../utils/goalStatus';
+import { fireGoalCompletedConfetti } from '../utils/confetti';
 
 function GoalsPage() {
   const {
@@ -42,7 +44,6 @@ function GoalsPage() {
     [goals, activeFilter]
   );
 
-  // ប្រើ id រក goal ថ្មីជានិច្ច ដើម្បីឱ្យប្រវត្តិ update ភ្លាមៗពេល deposit/withdraw
   const historyGoal = goals.find((g) => g.id === historyGoalId) || null;
 
   const handleOpenAdd = () => {
@@ -74,11 +75,20 @@ function GoalsPage() {
   };
 
   const handleDeposit = (amount, note) => {
+    const wasCompletedBefore = isGoalCompleted(transactingGoal);
     depositToGoal(transactingGoal.id, amount, note);
     showToast(
       `បានបញ្ចូលប្រាក់ ${amount} ${transactingGoal.currency}`,
       'success'
     );
+
+    // ពិនិត្យថា Goal ទើបតែសម្រេចដោយសារការបញ្ចូលប្រាក់នេះ
+    const willBeCompleted =
+      transactingGoal.currentAmount + amount >= transactingGoal.targetAmount;
+    if (!wasCompletedBefore && willBeCompleted) {
+      setTimeout(() => fireGoalCompletedConfetti(), 200);
+    }
+
     setTransactingGoal(null);
   };
 
@@ -113,61 +123,75 @@ function GoalsPage() {
       </div>
 
       {visibleGoals.length === 0 ? (
-        <p className="mt-4 text-slate-600 dark:text-slate-300">
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mt-4 text-slate-600 dark:text-slate-300"
+        >
           {goals.length === 0
             ? 'មិនទាន់មាន Goal ទេ។ ចុច "បង្កើត Goal" ដើម្បីចាប់ផ្តើម។'
             : 'គ្មាន Goal ដែលត្រូវនឹងជម្រើសនេះទេ។'}
-        </p>
+        </motion.p>
       ) : (
         <ul className="mt-4 space-y-2">
-          {visibleGoals.map((goal) => (
-            <GoalCard
-              key={goal.id}
-              goal={goal}
-              onEdit={handleOpenEdit}
-              onDelete={setDeletingGoal}
-              onTransact={setTransactingGoal}
-              onViewHistory={(g) => setHistoryGoalId(g.id)}
-            />
-          ))}
+          <AnimatePresence initial={false}>
+            {visibleGoals.map((goal) => (
+              <GoalCard
+                key={goal.id}
+                goal={goal}
+                onEdit={handleOpenEdit}
+                onDelete={setDeletingGoal}
+                onTransact={setTransactingGoal}
+                onViewHistory={(g) => setHistoryGoalId(g.id)}
+              />
+            ))}
+          </AnimatePresence>
         </ul>
       )}
 
-      {showForm && (
-        <GoalFormModal
-          initialData={editingGoal}
-          onSave={handleSave}
-          onClose={() => {
-            setShowForm(false);
-            setEditingGoal(null);
-          }}
-        />
-      )}
+      <AnimatePresence>
+        {showForm && (
+          <GoalFormModal
+            initialData={editingGoal}
+            onSave={handleSave}
+            onClose={() => {
+              setShowForm(false);
+              setEditingGoal(null);
+            }}
+          />
+        )}
+      </AnimatePresence>
 
-      {deletingGoal && (
-        <ConfirmDialog
-          title="លុប Goal នេះ?"
-          message={`តើអ្នកប្រាកដថាចង់លុប "${deletingGoal.name}" មែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។`}
-          onConfirm={handleConfirmDelete}
-          onCancel={() => setDeletingGoal(null)}
-        />
-      )}
+      <AnimatePresence>
+        {deletingGoal && (
+          <ConfirmDialog
+            title="លុប Goal នេះ?"
+            message={`តើអ្នកប្រាកដថាចង់លុប "${deletingGoal.name}" មែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។`}
+            onConfirm={handleConfirmDelete}
+            onCancel={() => setDeletingGoal(null)}
+          />
+        )}
+      </AnimatePresence>
 
-      {transactingGoal && (
-        <DepositWithdrawModal
-          goal={transactingGoal}
-          onDeposit={handleDeposit}
-          onWithdraw={handleWithdraw}
-          onClose={() => setTransactingGoal(null)}
-        />
-      )}
+      <AnimatePresence>
+        {transactingGoal && (
+          <DepositWithdrawModal
+            goal={transactingGoal}
+            onDeposit={handleDeposit}
+            onWithdraw={handleWithdraw}
+            onClose={() => setTransactingGoal(null)}
+          />
+        )}
+      </AnimatePresence>
 
-      {historyGoal && (
-        <TransactionHistoryModal
-          goal={historyGoal}
-          onClose={() => setHistoryGoalId(null)}
-        />
-      )}
+      <AnimatePresence>
+        {historyGoal && (
+          <TransactionHistoryModal
+            goal={historyGoal}
+            onClose={() => setHistoryGoalId(null)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }
