@@ -1,6 +1,9 @@
-import { PiggyBank, Moon } from 'lucide-react';
+import { PiggyBank, Moon, Sun } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 function Header() {
+  const { isDark, toggleTheme } = useTheme();
+
   return (
     <header className="border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
       <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
@@ -14,13 +17,13 @@ function Header() {
           </h1>
         </div>
 
-        {/* ប៊ូតុងនេះនឹងភ្ជាប់ដំណើរការនៅជំហានទី ១៤ (dark-mode-toggle) */}
         <button
           type="button"
-          aria-label="Toggle theme"
+          onClick={toggleTheme}
+          aria-label={isDark ? 'ប្តូរទៅ Light mode' : 'ប្តូរទៅ Dark mode'}
           className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-slate-300 dark:hover:bg-slate-700"
         >
-          <Moon className="h-5 w-5" />
+          {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </button>
       </div>
     </header>
