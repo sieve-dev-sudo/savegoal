@@ -9,7 +9,10 @@ import GoalFilterTabs from '../components/GoalFilterTabs';
 import GoalCard from '../components/GoalCard';
 import DepositWithdrawModal from '../components/DepositWithdrawModal';
 import TransactionHistoryModal from '../components/TransactionHistoryModal';
+import SearchBar from '../components/SearchBar';
+import SortDropdown from '../components/SortDropdown';
 import { filterGoals, isGoalCompleted } from '../utils/goalStatus';
+import { searchGoals, sortGoals } from '../utils/sortGoals';
 import { fireGoalCompletedConfetti } from '../utils/confetti';
 
 function GoalsPage() {
@@ -29,6 +32,8 @@ function GoalsPage() {
   const [transactingGoal, setTransactingGoal] = useState(null);
   const [historyGoalId, setHistoryGoalId] = useState(null);
   const [activeFilter, setActiveFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('newest');
 
   const counts = useMemo(
     () => ({
@@ -39,10 +44,11 @@ function GoalsPage() {
     [goals]
   );
 
-  const visibleGoals = useMemo(
-    () => filterGoals(goals, activeFilter),
-    [goals, activeFilter]
-  );
+  const visibleGoals = useMemo(() => {
+    const filtered = filterGoals(goals, activeFilter);
+    const searched = searchGoals(filtered, searchQuery);
+    return sortGoals(searched, sortBy);
+  }, [goals, activeFilter, searchQuery, sortBy]);
 
   const historyGoal = goals.find((g) => g.id === historyGoalId) || null;
 
@@ -114,7 +120,20 @@ function GoalsPage() {
         </button>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+        <div className="flex-1">
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="ស្វែងរក Goal តាមឈ្មោះ..."
+          />
+        </div>
+        <div className="sm:w-56">
+          <SortDropdown value={sortBy} onChange={setSortBy} />
+        </div>
+      </div>
+
+      <div className="mt-3">
         <GoalFilterTabs
           activeFilter={activeFilter}
           onChange={setActiveFilter}
@@ -130,7 +149,9 @@ function GoalsPage() {
         >
           {goals.length === 0
             ? 'មិនទាន់មាន Goal ទេ។ ចុច "បង្កើត Goal" ដើម្បីចាប់ផ្តើម។'
-            : 'គ្មាន Goal ដែលត្រូវនឹងជម្រើសនេះទេ។'}
+            : searchQuery
+              ? `គ្មាន Goal ដែលត្រូវនឹង "${searchQuery}" ទេ។`
+              : 'គ្មាន Goal ដែលត្រូវនឹងជម្រើសនេះទេ។'}
         </motion.p>
       ) : (
         <ul className="mt-4 space-y-2">
