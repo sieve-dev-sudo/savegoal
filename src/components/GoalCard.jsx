@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import {
   Pencil,
   Trash2,
@@ -27,7 +28,14 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
   const isOverdue = daysRemaining !== null && daysRemaining < 0 && !completed;
 
   return (
-    <li className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
+    <motion.li
+      layout
+      initial={{ opacity: 0, y: 12, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, x: -40, transition: { duration: 0.15 } }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+      className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800"
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -120,7 +128,7 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
 
         <SavingPaceInfo goal={goal} />
       </div>
-    </li>
+    </motion.li>
   );
 }
 
