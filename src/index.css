@@ -3,6 +3,11 @@
 /* Dark mode គ្រប់គ្រងដោយ class "dark" លើ <html> */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Breakpoint បន្ថែមសម្រាប់ទូរស័ព្ទតូចបំផុត */
+@theme {
+  --breakpoint-xs: 400px;
+}
+
 @layer base {
   html {
     color-scheme: light;

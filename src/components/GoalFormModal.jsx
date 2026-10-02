@@ -111,7 +111,9 @@ function GoalFormModal({ initialData, onSave, onClose }) {
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
             />
             {errors.targetAmount && (
-              <p className="mt-1 text-xs text-red-600">{errors.targetAmount}</p>
+              <p className="mt-1 text-xs text-red-600">
+                {errors.targetAmount}
+              </p>
             )}
           </div>
 
@@ -141,7 +143,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
           <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
             ប្រភេទ
           </span>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {CATEGORIES.map((c) => {
               const Icon = c.icon;
               const colors = CATEGORY_COLOR_CLASSES[c.color];
@@ -161,7 +163,9 @@ function GoalFormModal({ initialData, onSave, onClose }) {
                     <Check className="absolute right-1 top-1 h-3 w-3" />
                   )}
                   <Icon className={`h-4 w-4 ${active ? colors.icon : ''}`} />
-                  <span className="text-center leading-tight">{c.label}</span>
+                  <span className="text-center leading-tight">
+                    {c.label}
+                  </span>
                 </button>
               );
             })}

@@ -6,13 +6,13 @@ function Header() {
 
   return (
     <header className="border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
-      <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-2">
+      <div className="mx-auto flex max-w-4xl items-center justify-between px-3 py-2.5 sm:px-4 sm:py-3">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <PiggyBank
-            className="h-7 w-7 text-indigo-600 dark:text-indigo-400"
+            className="h-6 w-6 text-indigo-600 dark:text-indigo-400 sm:h-7 sm:w-7"
             aria-hidden="true"
           />
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+          <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100 sm:text-xl">
             SaveGoal
           </h1>
         </div>

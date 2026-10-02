@@ -36,7 +36,7 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
       transition={{ duration: 0.25, ease: 'easeOut' }}
       className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800"
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <p className="truncate font-medium text-slate-900 dark:text-slate-100">
@@ -71,12 +71,12 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
           </div>
         </div>
 
-        <div className="flex shrink-0 gap-1">
+        <div className="flex shrink-0 gap-0.5 sm:gap-1">
           <button
             type="button"
             onClick={() => onViewHistory(goal)}
             aria-label={`View transaction history for ${goal.name}`}
-            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700"
+            className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700 sm:p-2"
           >
             <History className="h-4 w-4" />
           </button>
@@ -84,7 +84,7 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
             type="button"
             onClick={() => onTransact(goal)}
             aria-label={`Deposit or withdraw for ${goal.name}`}
-            className="rounded-lg p-2 text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/30"
+            className="rounded-lg p-1.5 text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/30 sm:p-2"
           >
             <Wallet className="h-4 w-4" />
           </button>
@@ -92,7 +92,7 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
             type="button"
             onClick={() => onEdit(goal)}
             aria-label={`Edit ${goal.name}`}
-            className="rounded-lg p-2 text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30"
+            className="rounded-lg p-1.5 text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30 sm:p-2"
           >
             <Pencil className="h-4 w-4" />
           </button>
@@ -100,7 +100,7 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
             type="button"
             onClick={() => onDelete(goal)}
             aria-label={`Delete ${goal.name}`}
-            className="rounded-lg p-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30"
+            className="rounded-lg p-1.5 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30 sm:p-2"
           >
             <Trash2 className="h-4 w-4" />
           </button>
