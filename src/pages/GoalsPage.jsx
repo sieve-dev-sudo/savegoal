@@ -82,7 +82,6 @@ function GoalsPage() {
       'success'
     );
 
-    // ពិនិត្យថា Goal ទើបតែសម្រេចដោយសារការបញ្ចូលប្រាក់នេះ
     const willBeCompleted =
       transactingGoal.currentAmount + amount >= transactingGoal.targetAmount;
     if (!wasCompletedBefore && willBeCompleted) {
@@ -100,7 +99,7 @@ function GoalsPage() {
 
   return (
     <section>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
           Goals
         </h2>
@@ -110,7 +109,8 @@ function GoalsPage() {
           className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
         >
           <Plus className="h-4 w-4" />
-          បង្កើត Goal
+          <span className="hidden xs:inline">បង្កើត Goal</span>
+          <span className="xs:hidden">បង្កើត</span>
         </button>
       </div>
 
