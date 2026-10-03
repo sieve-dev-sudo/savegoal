@@ -16,6 +16,13 @@ export function useLocalStorage(key, initialValue) {
       window.localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
       console.error(`Error writing localStorage key "${key}":`, error);
+      const message =
+        error.name === 'QuotaExceededError'
+          ? 'ទំហំផ្ទុកទិន្នន័យពេញហើយ។ សូមលុបទិន្នន័យចាស់ៗចោលខ្លះ។'
+          : 'មានបញ្ហាក្នុងការរក្សាទុកទិន្នន័យ។';
+      window.dispatchEvent(
+        new CustomEvent('savegoal:storage-error', { detail: message })
+      );
     }
   }, [key, value]);
 
