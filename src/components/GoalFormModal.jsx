@@ -111,9 +111,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
             />
             {errors.targetAmount && (
-              <p className="mt-1 text-xs text-red-600">
-                {errors.targetAmount}
-              </p>
+              <p className="mt-1 text-xs text-red-600">{errors.targetAmount}</p>
             )}
           </div>
 
@@ -163,9 +161,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
                     <Check className="absolute right-1 top-1 h-3 w-3" />
                   )}
                   <Icon className={`h-4 w-4 ${active ? colors.icon : ''}`} />
-                  <span className="text-center leading-tight">
-                    {c.label}
-                  </span>
+                  <span className="text-center leading-tight">{c.label}</span>
                 </button>
               );
             })}
