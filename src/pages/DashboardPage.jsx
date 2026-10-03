@@ -1,5 +1,11 @@
 import { useMemo } from 'react';
-import { Target, CheckCircle2, TrendingUp, AlertTriangle } from 'lucide-react';
+import {
+  Target,
+  CheckCircle2,
+  TrendingUp,
+  AlertTriangle,
+  PiggyBank,
+} from 'lucide-react';
 import { useGoals } from '../context/GoalContext';
 import {
   getSummaryStats,
@@ -10,6 +16,7 @@ import { formatCurrency } from '../utils/currency';
 import StatCard from '../components/StatCard';
 import GoalProgressChart from '../components/GoalProgressChart';
 import CategoryPieChart from '../components/CategoryPieChart';
+import EmptyState from '../components/EmptyState';
 
 function DashboardPage() {
   const { goals } = useGoals();
@@ -24,9 +31,13 @@ function DashboardPage() {
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
           Dashboard
         </h2>
-        <p className="mt-4 text-slate-600 dark:text-slate-300">
-          មិនទាន់មាន Goal ទេ។ បង្កើត Goal ដំបូងនៅ tab "Goals" ដើម្បីមើលស្ថិតិ។
-        </p>
+        <div className="mt-4">
+          <EmptyState
+            icon={PiggyBank}
+            title="មិនទាន់មាន Goal ទេ"
+            description='បង្កើត Goal ដំបូងនៅ tab "Goals" ដើម្បីមើលស្ថិតិ'
+          />
+        </div>
       </section>
     );
   }
@@ -37,7 +48,6 @@ function DashboardPage() {
         Dashboard
       </h2>
 
-      {/* Stat cards */}
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard
           icon={Target}
@@ -65,7 +75,6 @@ function DashboardPage() {
         />
       </div>
 
-      {/* ចំនួនសន្សំសរុបតាម currency */}
       <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
         <h3 className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
           ចំនួនសន្សំសរុប
@@ -84,7 +93,6 @@ function DashboardPage() {
         </div>
       </div>
 
-      {/* Bar chart */}
       <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
         <h3 className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
           ភាគរយរបស់ Goal នីមួយៗ
@@ -92,7 +100,6 @@ function DashboardPage() {
         <GoalProgressChart data={progressChartData} />
       </div>
 
-      {/* Pie chart */}
       <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
         <h3 className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
           ចំនួន Goal តាមប្រភេទ
@@ -100,7 +107,6 @@ function DashboardPage() {
         <CategoryPieChart data={categoryChartData} />
       </div>
 
-      {/* បញ្ជី Goal ជិតសម្រេច */}
       {stats.nearingCompletion.length > 0 && (
         <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
           <h3 className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -124,7 +130,6 @@ function DashboardPage() {
         </div>
       )}
 
-      {/* បញ្ជី Goal ហួសកាលកំណត់ */}
       {stats.overdueGoals.length > 0 && (
         <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-900/20">
           <h3 className="mb-2 text-sm font-medium text-red-700 dark:text-red-300">

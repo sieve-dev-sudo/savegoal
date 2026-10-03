@@ -101,6 +101,19 @@ export function GoalProvider({ children }) {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state.goals));
     } catch (error) {
       console.error('Error writing goals to localStorage:', error);
+      if (error.name === 'QuotaExceededError') {
+        window.dispatchEvent(
+          new CustomEvent('savegoal:storage-error', {
+            detail: 'ទំហំផ្ទុកទិន្នន័យពេញហើយ។ Goal ថ្មីៗអាចនឹងមិនរក្សាទុក។',
+          })
+        );
+      } else {
+        window.dispatchEvent(
+          new CustomEvent('savegoal:storage-error', {
+            detail: 'មានបញ្ហាក្នុងការរក្សាទុកទិន្នន័យ។',
+          })
+        );
+      }
     }
   }, [state.goals]);
 

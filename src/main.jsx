@@ -5,15 +5,18 @@ import App from './App.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import { GoalProvider } from './context/GoalContext.jsx';
 import { ToastProvider } from './context/ToastContext.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ThemeProvider>
-      <ToastProvider>
-        <GoalProvider>
-          <App />
-        </GoalProvider>
-      </ToastProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <ToastProvider>
+          <GoalProvider>
+            <App />
+          </GoalProvider>
+        </ToastProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   </StrictMode>
 );
