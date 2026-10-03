@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Plus } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import { Plus, PiggyBank, SearchX } from 'lucide-react';
 import { useGoals } from '../context/GoalContext';
 import { useToast } from '../context/ToastContext';
 import GoalFormModal from '../components/GoalFormModal';
@@ -11,6 +11,7 @@ import DepositWithdrawModal from '../components/DepositWithdrawModal';
 import TransactionHistoryModal from '../components/TransactionHistoryModal';
 import SearchBar from '../components/SearchBar';
 import SortDropdown from '../components/SortDropdown';
+import EmptyState from '../components/EmptyState';
 import { filterGoals, isGoalCompleted } from '../utils/goalStatus';
 import { searchGoals, sortGoals } from '../utils/sortGoals';
 import { fireGoalCompletedConfetti } from '../utils/confetti';
@@ -142,17 +143,35 @@ function GoalsPage() {
       </div>
 
       {visibleGoals.length === 0 ? (
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mt-4 text-slate-600 dark:text-slate-300"
-        >
-          {goals.length === 0
-            ? 'មិនទាន់មាន Goal ទេ។ ចុច "បង្កើត Goal" ដើម្បីចាប់ផ្តើម។'
-            : searchQuery
-              ? `គ្មាន Goal ដែលត្រូវនឹង "${searchQuery}" ទេ។`
-              : 'គ្មាន Goal ដែលត្រូវនឹងជម្រើសនេះទេ។'}
-        </motion.p>
+        <div className="mt-4">
+          {goals.length === 0 ? (
+            <EmptyState
+              icon={PiggyBank}
+              title="មិនទាន់មាន Goal ទេ"
+              description="ចាប់ផ្តើមសន្សំដោយបង្កើត Goal ដំបូងរបស់អ្នក"
+              action={
+                <button
+                  type="button"
+                  onClick={handleOpenAdd}
+                  className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                >
+                  <Plus className="h-4 w-4" />
+                  បង្កើត Goal ដំបូង
+                </button>
+              }
+            />
+          ) : (
+            <EmptyState
+              icon={SearchX}
+              title={
+                searchQuery
+                  ? `គ្មាន Goal ដែលត្រូវនឹង "${searchQuery}" ទេ`
+                  : 'គ្មាន Goal ដែលត្រូវនឹងជម្រើសនេះទេ'
+              }
+              description="សាកល្បងប្តូរពាក្យស្វែងរក ឬជម្រើស filter ផ្សេង"
+            />
+          )}
+        </div>
       ) : (
         <ul className="mt-4 space-y-2">
           <AnimatePresence initial={false}>
