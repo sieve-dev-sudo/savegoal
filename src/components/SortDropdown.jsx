@@ -1,7 +1,17 @@
 import { ArrowUpDown } from 'lucide-react';
-import { SORT_OPTIONS } from '../utils/sortGoals';
+import { useLanguage } from '../context/LanguageContext';
 
 function SortDropdown({ value, onChange }) {
+  const { t } = useLanguage();
+
+  const SORT_OPTIONS = [
+    { id: 'newest', label: t.sort.newest },
+    { id: 'deadline', label: t.sort.deadline },
+    { id: 'progress-high', label: t.sort.progressHigh },
+    { id: 'progress-low', label: t.sort.progressLow },
+    { id: 'name', label: t.sort.name },
+  ];
+
   return (
     <div className="relative">
       <ArrowUpDown className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
