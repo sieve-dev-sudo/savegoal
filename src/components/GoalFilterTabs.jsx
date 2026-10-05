@@ -1,10 +1,14 @@
-const FILTERS = [
-  { id: 'all', label: 'ទាំងអស់' },
-  { id: 'in-progress', label: 'កំពុងដំណើរការ' },
-  { id: 'completed', label: 'សម្រេចហើយ' },
-];
+import { useLanguage } from '../context/LanguageContext';
 
 function GoalFilterTabs({ activeFilter, onChange, counts }) {
+  const { t } = useLanguage();
+
+  const FILTERS = [
+    { id: 'all', label: t.filters.all },
+    { id: 'in-progress', label: t.filters.inProgress },
+    { id: 'completed', label: t.filters.completed },
+  ];
+
   return (
     <div
       role="tablist"

@@ -1,11 +1,14 @@
 import { LayoutDashboard, Target } from 'lucide-react';
-
-const TABS = [
-  { id: 'goals', label: 'Goals', icon: Target },
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-];
+import { useLanguage } from '../context/LanguageContext';
 
 function Nav({ currentPage, onNavigate }) {
+  const { t } = useLanguage();
+
+  const TABS = [
+    { id: 'goals', label: t.nav.goals, icon: Target },
+    { id: 'dashboard', label: t.nav.dashboard, icon: LayoutDashboard },
+  ];
+
   return (
     <nav
       aria-label="Main navigation"
