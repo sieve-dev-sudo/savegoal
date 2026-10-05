@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "description": "A personal saving goal tracker built with React, Vite and Tailwind CSS. Local demo project for portfolio.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
