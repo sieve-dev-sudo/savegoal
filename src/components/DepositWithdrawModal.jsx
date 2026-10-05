@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, ArrowDownCircle, ArrowUpCircle } from 'lucide-react';
 import { formatCurrency, CURRENCY_SYMBOLS } from '../utils/currency';
 import ModalOverlay from './ModalOverlay';
+import CurrencyConversionHint from './CurrencyConversionHint';
 
 function DepositWithdrawModal({ goal, onDeposit, onWithdraw, onClose }) {
   const [mode, setMode] = useState('deposit');
@@ -109,6 +110,7 @@ function DepositWithdrawModal({ goal, onDeposit, onWithdraw, onClose }) {
             className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           />
           {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+          <CurrencyConversionHint amount={amount} currency={goal.currency} />
         </div>
 
         <div>
