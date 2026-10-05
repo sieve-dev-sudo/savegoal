@@ -1,9 +1,11 @@
 import { X, ArrowDownCircle, ArrowUpCircle, Inbox } from 'lucide-react';
 import { formatDateTime } from '../utils/date';
 import { formatCurrency } from '../utils/currency';
+import { useLanguage } from '../context/LanguageContext';
 import ModalOverlay from './ModalOverlay';
 
 function TransactionHistoryModal({ goal, onClose }) {
+  const { t } = useLanguage();
   const transactions = goal.transactions || [];
 
   return (
@@ -11,7 +13,7 @@ function TransactionHistoryModal({ goal, onClose }) {
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            ប្រវត្តិប្រតិបត្តិការ
+            {t.history.title}
           </h3>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             {goal.name}
@@ -31,7 +33,7 @@ function TransactionHistoryModal({ goal, onClose }) {
         <div className="flex flex-col items-center justify-center py-8 text-center">
           <Inbox className="h-10 w-10 text-slate-300 dark:text-slate-600" />
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-            មិនទាន់មានប្រតិបត្តិការទេ
+            {t.history.empty}
           </p>
         </div>
       ) : (
