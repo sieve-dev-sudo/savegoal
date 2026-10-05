@@ -4,6 +4,7 @@ import { CATEGORIES, CURRENCIES } from '../constants/categories';
 import { CATEGORY_COLOR_CLASSES } from '../constants/categoryColors';
 import { CURRENCY_SYMBOLS } from '../utils/currency';
 import ModalOverlay from './ModalOverlay';
+import CurrencyConversionHint from './CurrencyConversionHint';
 
 function GoalFormModal({ initialData, onSave, onClose }) {
   const isEditing = Boolean(initialData);
@@ -111,8 +112,14 @@ function GoalFormModal({ initialData, onSave, onClose }) {
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
             />
             {errors.targetAmount && (
-              <p className="mt-1 text-xs text-red-600">{errors.targetAmount}</p>
+              <p className="mt-1 text-xs text-red-600">
+                {errors.targetAmount}
+              </p>
             )}
+            <CurrencyConversionHint
+              amount={targetAmount}
+              currency={currency}
+            />
           </div>
 
           <div>
