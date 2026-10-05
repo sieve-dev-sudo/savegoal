@@ -13,7 +13,7 @@ import {
   getRemainingAmount,
 } from '../utils/goalStatus';
 import { formatDeadlineLabel, getDaysRemaining } from '../utils/date';
-import { formatCurrency } from '../utils/currency';
+import { formatCurrency, getConvertedDisplay } from '../utils/currency';
 import ProgressBar from './ProgressBar';
 import CategoryBadge from './CategoryBadge';
 import SavingPaceInfo from './SavingPaceInfo';
@@ -127,6 +127,10 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
         </p>
 
         <SavingPaceInfo goal={goal} />
+
+        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+          {getConvertedDisplay(goal.targetAmount, goal.currency)}
+        </p>
       </div>
     </motion.li>
   );
