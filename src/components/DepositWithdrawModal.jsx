@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { X, ArrowDownCircle, ArrowUpCircle } from 'lucide-react';
 import { formatCurrency, CURRENCY_SYMBOLS } from '../utils/currency';
+import { useLanguage } from '../context/LanguageContext';
 import ModalOverlay from './ModalOverlay';
 import CurrencyConversionHint from './CurrencyConversionHint';
 
 function DepositWithdrawModal({ goal, onDeposit, onWithdraw, onClose }) {
+  const { t } = useLanguage();
   const [mode, setMode] = useState('deposit');
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
@@ -17,12 +19,12 @@ function DepositWithdrawModal({ goal, onDeposit, onWithdraw, onClose }) {
     const amountNum = Number(amount);
 
     if (!amount || isNaN(amountNum) || amountNum <= 0) {
-      setError('ចំនួនប្រាក់ត្រូវធំជាង 0');
+      setError(t.transaction.errorAmount);
       return;
     }
 
     if (mode === 'withdraw' && amountNum > goal.currentAmount) {
-      setError('ចំនួនដកលើសពីទឹកប្រាក់ដែលមាន');
+      setError(t.transaction.errorInsufficient);
       return;
     }
 
@@ -50,7 +52,7 @@ function DepositWithdrawModal({ goal, onDeposit, onWithdraw, onClose }) {
       </div>
 
       <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
-        បច្ចុប្បន្ន: {formatCurrency(goal.currentAmount, goal.currency)} /{' '}
+        {t.transaction.current}: {formatCurrency(goal.currentAmount, goal.currency)} /{' '}
         {formatCurrency(goal.targetAmount, goal.currency)}
       </p>
 
@@ -68,7 +70,7 @@ function DepositWithdrawModal({ goal, onDeposit, onWithdraw, onClose }) {
           }`}
         >
           <ArrowDownCircle className="h-4 w-4" />
-          បញ្ចូលប្រាក់
+          {t.transaction.deposit}
         </button>
         <button
           type="button"
@@ -83,7 +85,7 @@ function DepositWithdrawModal({ goal, onDeposit, onWithdraw, onClose }) {
           }`}
         >
           <ArrowUpCircle className="h-4 w-4" />
-          ដកប្រាក់
+          {t.transaction.withdraw}
         </button>
       </div>
 
@@ -93,7 +95,7 @@ function DepositWithdrawModal({ goal, onDeposit, onWithdraw, onClose }) {
             htmlFor="tx-amount"
             className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
           >
-            ចំនួនទឹកប្រាក់ ({symbol})
+            {t.transaction.amount} ({symbol})
           </label>
           <input
             id="tx-amount"
@@ -118,14 +120,14 @@ function DepositWithdrawModal({ goal, onDeposit, onWithdraw, onClose }) {
             htmlFor="tx-note"
             className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
           >
-            កំណត់ចំណាំ (ជម្រើស)
+            {t.transaction.note}
           </label>
           <input
             id="tx-note"
             type="text"
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="ឧ. ប្រាក់ខែខែនេះ"
+            placeholder={t.transaction.notePlaceholder}
             className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           />
         </div>
@@ -136,7 +138,7 @@ function DepositWithdrawModal({ goal, onDeposit, onWithdraw, onClose }) {
             onClick={onClose}
             className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
           >
-            បោះបង់
+            {t.goalForm.cancel}
           </button>
           <button
             type="submit"
@@ -146,7 +148,7 @@ function DepositWithdrawModal({ goal, onDeposit, onWithdraw, onClose }) {
                 : 'bg-red-600 hover:bg-red-700 focus-visible:ring-red-500'
             }`}
           >
-            {mode === 'deposit' ? 'បញ្ចូលប្រាក់' : 'ដកប្រាក់'}
+            {mode === 'deposit' ? t.transaction.deposit : t.transaction.withdraw}
           </button>
         </div>
       </form>
