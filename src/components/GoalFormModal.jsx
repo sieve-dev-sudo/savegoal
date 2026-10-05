@@ -3,10 +3,12 @@ import { X, Check } from 'lucide-react';
 import { CATEGORIES, CURRENCIES } from '../constants/categories';
 import { CATEGORY_COLOR_CLASSES } from '../constants/categoryColors';
 import { CURRENCY_SYMBOLS } from '../utils/currency';
+import { useLanguage } from '../context/LanguageContext';
 import ModalOverlay from './ModalOverlay';
 import CurrencyConversionHint from './CurrencyConversionHint';
 
 function GoalFormModal({ initialData, onSave, onClose }) {
+  const { t, isEnglish } = useLanguage();
   const isEditing = Boolean(initialData);
 
   const [name, setName] = useState(initialData?.name || '');
@@ -24,18 +26,18 @@ function GoalFormModal({ initialData, onSave, onClose }) {
     const newErrors = {};
 
     if (!name.trim()) {
-      newErrors.name = 'សូមបញ្ចូលឈ្មោះ Goal';
+      newErrors.name = t.goalForm.errors.name;
     }
 
     const amountNum = Number(targetAmount);
     if (!targetAmount || isNaN(amountNum) || amountNum <= 0) {
-      newErrors.targetAmount = 'ចំនួនគោលដៅត្រូវធំជាង 0';
+      newErrors.targetAmount = t.goalForm.errors.amount;
     }
 
     if (deadline) {
       const today = new Date().toISOString().split('T')[0];
       if (deadline < today) {
-        newErrors.deadline = 'Deadline មិនអាចនៅអតីតកាលទេ';
+        newErrors.deadline = t.goalForm.errors.deadline;
       }
     }
 
@@ -60,7 +62,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
     <ModalOverlay onClose={onClose} maxWidthClass="max-w-md">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-          {isEditing ? 'កែ Goal' : 'បង្កើត Goal ថ្មី'}
+          {isEditing ? t.goalForm.titleEdit : t.goalForm.titleCreate}
         </h3>
         <button
           type="button"
@@ -78,14 +80,14 @@ function GoalFormModal({ initialData, onSave, onClose }) {
             htmlFor="goal-name"
             className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
           >
-            ឈ្មោះ Goal
+            {t.goalForm.name}
           </label>
           <input
             id="goal-name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="ឧ. ទិញទូរស័ព្ទថ្មី"
+            placeholder={t.goalForm.namePlaceholder}
             className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           />
           {errors.name && (
@@ -99,7 +101,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
               htmlFor="goal-amount"
               className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
             >
-              ចំនួនគោលដៅ ({CURRENCY_SYMBOLS[currency]})
+              {t.goalForm.targetAmount} ({CURRENCY_SYMBOLS[currency]})
             </label>
             <input
               id="goal-amount"
@@ -127,7 +129,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
               htmlFor="goal-currency"
               className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
             >
-              រូបិយប័ណ្ណ
+              {t.goalForm.currency}
             </label>
             <select
               id="goal-currency"
@@ -146,7 +148,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
 
         <div>
           <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-            ប្រភេទ
+            {t.goalForm.category}
           </span>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {CATEGORIES.map((c) => {
@@ -168,7 +170,9 @@ function GoalFormModal({ initialData, onSave, onClose }) {
                     <Check className="absolute right-1 top-1 h-3 w-3" />
                   )}
                   <Icon className={`h-4 w-4 ${active ? colors.icon : ''}`} />
-                  <span className="text-center leading-tight">{c.label}</span>
+                  <span className="text-center leading-tight">
+                    {isEnglish ? c.labelEn : c.label}
+                  </span>
                 </button>
               );
             })}
@@ -180,7 +184,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
             htmlFor="goal-deadline"
             className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
           >
-            Deadline (ជម្រើស)
+            {t.goalForm.deadline}
           </label>
           <input
             id="goal-deadline"
@@ -200,13 +204,13 @@ function GoalFormModal({ initialData, onSave, onClose }) {
             onClick={onClose}
             className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
           >
-            បោះបង់
+            {t.goalForm.cancel}
           </button>
           <button
             type="submit"
             className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
           >
-            {isEditing ? 'រក្សាទុក' : 'បង្កើត'}
+            {isEditing ? t.goalForm.save : t.goalForm.create}
           </button>
         </div>
       </form>

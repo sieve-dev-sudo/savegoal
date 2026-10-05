@@ -1,6 +1,9 @@
+import { useLanguage } from '../context/LanguageContext';
 import ModalOverlay from './ModalOverlay';
 
 function ConfirmDialog({ title, message, onConfirm, onCancel }) {
+  const { t } = useLanguage();
+
   return (
     <ModalOverlay onClose={onCancel} maxWidthClass="max-w-sm">
       <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
@@ -15,14 +18,14 @@ function ConfirmDialog({ title, message, onConfirm, onCancel }) {
           onClick={onCancel}
           className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
         >
-          បោះបង់
+          {t.confirm.cancel}
         </button>
         <button
           type="button"
           onClick={onConfirm}
           className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
         >
-          លុប
+          {t.confirm.delete}
         </button>
       </div>
     </ModalOverlay>

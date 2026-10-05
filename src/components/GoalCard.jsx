@@ -14,11 +14,13 @@ import {
 } from '../utils/goalStatus';
 import { formatDeadlineLabel, getDaysRemaining } from '../utils/date';
 import { formatCurrency, getConvertedDisplay } from '../utils/currency';
+import { useLanguage } from '../context/LanguageContext';
 import ProgressBar from './ProgressBar';
 import CategoryBadge from './CategoryBadge';
 import SavingPaceInfo from './SavingPaceInfo';
 
 function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
+  const { t } = useLanguage();
   const progress = getGoalProgress(goal);
   const completed = isGoalCompleted(goal);
   const remaining = getRemainingAmount(goal);
@@ -45,12 +47,12 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
             {completed && (
               <span className="flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/40 dark:text-green-300">
                 <CheckCircle2 className="h-3 w-3" />
-                សម្រេចហើយ
+                {t.goalCard.completed}
               </span>
             )}
             {isOverdue && (
               <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/40 dark:text-red-300">
-                ហួសកាលកំណត់
+                {t.goalCard.overdue}
               </span>
             )}
           </div>
@@ -122,8 +124,8 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
 
         <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
           {completed
-            ? 'បានសន្សំគ្រប់ចំនួនហើយ! 🎉'
-            : `នៅសល់ ${formatCurrency(remaining, goal.currency)} ត្រូវសន្សំបន្ថែម`}
+            ? t.goalCard.completedMsg
+            : t.goalCard.remaining(formatCurrency(remaining, goal.currency))}
         </p>
 
         <SavingPaceInfo goal={goal} />

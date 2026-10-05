@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import { Plus, PiggyBank, SearchX } from 'lucide-react';
 import { useGoals } from '../context/GoalContext';
 import { useToast } from '../context/ToastContext';
+import { useLanguage } from '../context/LanguageContext';
 import GoalFormModal from '../components/GoalFormModal';
 import ConfirmDialog from '../components/ConfirmDialog';
 import GoalFilterTabs from '../components/GoalFilterTabs';
@@ -26,6 +27,7 @@ function GoalsPage() {
     withdrawFromGoal,
   } = useGoals();
   const { showToast } = useToast();
+  const { t } = useLanguage();
 
   const [showForm, setShowForm] = useState(false);
   const [editingGoal, setEditingGoal] = useState(null);
@@ -66,10 +68,10 @@ function GoalsPage() {
   const handleSave = (formData) => {
     if (editingGoal) {
       editGoal(editingGoal.id, formData);
-      showToast('បានកែ Goal ជោគជ័យ', 'success');
+      showToast(t.toast.goalUpdated, 'success');
     } else {
       addGoal(formData);
-      showToast('បានបង្កើត Goal ជោគជ័យ', 'success');
+      showToast(t.toast.goalCreated, 'success');
     }
     setShowForm(false);
     setEditingGoal(null);
@@ -77,7 +79,7 @@ function GoalsPage() {
 
   const handleConfirmDelete = () => {
     deleteGoal(deletingGoal.id);
-    showToast('បានលុប Goal', 'success');
+    showToast(t.toast.goalDeleted, 'success');
     setDeletingGoal(null);
   };
 
@@ -85,7 +87,7 @@ function GoalsPage() {
     const wasCompletedBefore = isGoalCompleted(transactingGoal);
     depositToGoal(transactingGoal.id, amount, note);
     showToast(
-      `បានបញ្ចូលប្រាក់ ${amount} ${transactingGoal.currency}`,
+      t.toast.deposited(`${amount} ${transactingGoal.currency}`),
       'success'
     );
 
@@ -100,7 +102,10 @@ function GoalsPage() {
 
   const handleWithdraw = (amount, note) => {
     withdrawFromGoal(transactingGoal.id, amount, note);
-    showToast(`បានដកប្រាក់ ${amount} ${transactingGoal.currency}`, 'success');
+    showToast(
+      t.toast.withdrawn(`${amount} ${transactingGoal.currency}`),
+      'success'
+    );
     setTransactingGoal(null);
   };
 
@@ -108,7 +113,7 @@ function GoalsPage() {
     <section>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-          Goals
+          {t.goalsPage.title}
         </h2>
         <button
           type="button"
@@ -116,8 +121,8 @@ function GoalsPage() {
           className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
         >
           <Plus className="h-4 w-4" />
-          <span className="hidden xs:inline">បង្កើត Goal</span>
-          <span className="xs:hidden">បង្កើត</span>
+          <span className="hidden xs:inline">{t.goalsPage.addGoal}</span>
+          <span className="xs:hidden">{t.goalsPage.addGoalShort}</span>
         </button>
       </div>
 
@@ -126,7 +131,7 @@ function GoalsPage() {
           <SearchBar
             value={searchQuery}
             onChange={setSearchQuery}
-            placeholder="ស្វែងរក Goal តាមឈ្មោះ..."
+            placeholder={t.goalsPage.searchPlaceholder}
           />
         </div>
         <div className="sm:w-56">
@@ -147,8 +152,8 @@ function GoalsPage() {
           {goals.length === 0 ? (
             <EmptyState
               icon={PiggyBank}
-              title="មិនទាន់មាន Goal ទេ"
-              description="ចាប់ផ្តើមសន្សំដោយបង្កើត Goal ដំបូងរបស់អ្នក"
+              title={t.goalsPage.emptyTitle}
+              description={t.goalsPage.emptyDescription}
               action={
                 <button
                   type="button"
@@ -156,7 +161,7 @@ function GoalsPage() {
                   className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
                 >
                   <Plus className="h-4 w-4" />
-                  បង្កើត Goal ដំបូង
+                  {t.goalsPage.addFirstGoal}
                 </button>
               }
             />
@@ -165,10 +170,10 @@ function GoalsPage() {
               icon={SearchX}
               title={
                 searchQuery
-                  ? `គ្មាន Goal ដែលត្រូវនឹង "${searchQuery}" ទេ`
-                  : 'គ្មាន Goal ដែលត្រូវនឹងជម្រើសនេះទេ'
+                  ? t.goalsPage.noSearchResults(searchQuery)
+                  : t.goalsPage.emptyFilterTitle
               }
-              description="សាកល្បងប្តូរពាក្យស្វែងរក ឬជម្រើស filter ផ្សេង"
+              description={t.goalsPage.emptyFilterDescription}
             />
           )}
         </div>
@@ -205,8 +210,8 @@ function GoalsPage() {
       <AnimatePresence>
         {deletingGoal && (
           <ConfirmDialog
-            title="លុប Goal នេះ?"
-            message={`តើអ្នកប្រាកដថាចង់លុប "${deletingGoal.name}" មែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។`}
+            title={t.confirm.deleteTitle}
+            message={t.confirm.deleteMessage(deletingGoal.name)}
             onConfirm={handleConfirmDelete}
             onCancel={() => setDeletingGoal(null)}
           />
