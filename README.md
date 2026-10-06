@@ -7,6 +7,7 @@
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-1572B6?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![Tests](https://img.shields.io/badge/Tests-37%20passing-2ea44f?style=for-the-badge)
 ![Responsive](https://img.shields.io/badge/Responsive-Yes-brightgreen?style=for-the-badge)
+![Languages](https://img.shields.io/badge/Languages-EN%20%7C%20KH-6366F1?style=for-the-badge)
 
 </div>
 
@@ -26,12 +27,14 @@
 - **Search + Sort** តាមឈ្មោះ, deadline, ឬភាគរយ
 - **ប្រភេទ (Category)** ៦ ប្រភេទ ជាមួយ icon និងពណ៌ផ្ទាល់ខ្លួន
 - **គណនាការសន្សំឆ្លាតវៃ**៖ ត្រូវសន្សំប៉ុន្មានក្នុងមួយថ្ងៃ/សប្តាហ៍/ខែ ដើម្បីទាន់ deadline
+- **ប្តូររូបិយប័ណ្ណ (Currency Conversion)**៖ USD ↔ KHR (1 USD = 4,100 KHR) បង្ហាញតម្លៃប្តូរភ្លាមៗពេលបញ្ចូលលេខ
+- **ភាសា EN/KH**៖ ប្តូរភាសាពេញលេញ (English / ខ្មែរ) persist រក្សាទុកជម្រើស
 - **Dashboard** បង្ហាញស្ថិតិសរុប + Chart (Bar + Pie) ដោយ Recharts
 - **Dark / Light mode** persist រក្សាទុកជម្រើស
 - **Animation** រលូន (Framer Motion) + **Confetti** ពេល Goal សម្រេច 100%
 - **Responsive** ពេញលេញ គ្រប់ទំហំអេក្រង់ (Mobile / Tablet / Desktop)
 - **Error Boundary** + **Empty States** ការពារការ crash
-- **Unit Tests** 37 tests ដោយ Vitest + React Testing Library
+- **Unit Tests** 37+ tests ដោយ Vitest + React Testing Library
 
 ---
 
@@ -40,7 +43,7 @@
 ```
 savegoal/
 ├── src/
-│   ├── components/           → UI components ទាំងអស់
+│   ├── components/              → UI components ទាំងអស់
 │   │   ├── GoalCard.jsx
 │   │   ├── GoalFormModal.jsx
 │   │   ├── DepositWithdrawModal.jsx
@@ -49,9 +52,11 @@ savegoal/
 │   │   ├── ModalOverlay.jsx
 │   │   ├── ProgressBar.jsx
 │   │   ├── CategoryBadge.jsx
+│   │   ├── CurrencyConversionHint.jsx
 │   │   ├── GoalFilterTabs.jsx
 │   │   ├── SearchBar.jsx
 │   │   ├── SortDropdown.jsx
+│   │   ├── LanguageToggle.jsx
 │   │   ├── StatCard.jsx
 │   │   ├── GoalProgressChart.jsx
 │   │   ├── CategoryPieChart.jsx
@@ -61,35 +66,54 @@ savegoal/
 │   │   ├── Header.jsx
 │   │   ├── Nav.jsx
 │   │   └── Layout.jsx
-│   ├── context/               → State management (Context API)
-│   │   ├── GoalContext.jsx    → CRUD, Deposit/Withdraw, localStorage
-│   │   ├── ThemeContext.jsx   → Dark/Light mode
-│   │   └── ToastContext.jsx   → Notifications
+│   ├── context/                 → State management (Context API)
+│   │   ├── GoalContext.jsx      → CRUD, Deposit/Withdraw, localStorage
+│   │   ├── ThemeContext.jsx     → Dark/Light mode
+│   │   ├── LanguageContext.jsx  → EN/KH language
+│   │   └── ToastContext.jsx     → Notifications
 │   ├── hooks/
 │   │   └── useLocalStorage.js
 │   ├── pages/
-│   │   ├── GoalsPage.jsx      → ទំព័រគ្រប់គ្រង Goal
-│   │   └── DashboardPage.jsx  → ស្ថិតិសរុប + Chart
-│   ├── utils/                 → Logic & calculations
-│   │   ├── goalStatus.js      → Progress, completion, saving pace
-│   │   ├── currency.js        → USD/KHR formatting
-│   │   ├── date.js            → Deadline calculations
-│   │   ├── sortGoals.js       → Search & sort
-│   │   ├── dashboardStats.js  → Dashboard statistics
+│   │   ├── GoalsPage.jsx        → ទំព័រគ្រប់គ្រង Goal
+│   │   └── DashboardPage.jsx    → ស្ថិតិសរុប + Chart
+│   ├── utils/                   → Logic & calculations
+│   │   ├── goalStatus.js        → Progress, completion, saving pace
+│   │   ├── currency.js          → USD/KHR formatting & conversion
+│   │   ├── date.js              → Deadline calculations
+│   │   ├── sortGoals.js         → Search & sort
+│   │   ├── dashboardStats.js    → Dashboard statistics
 │   │   ├── confetti.js
 │   │   └── id.js
 │   ├── constants/
-│   │   ├── categories.js
+│   │   ├── categories.js        → Category list (EN/KH labels)
 │   │   ├── categoryColors.js
-│   │   └── chartColors.js
+│   │   ├── chartColors.js
+│   │   └── translations.js      → EN/KH translation dictionary
 │   ├── test/
 │   │   └── setup.js
 │   ├── App.jsx
 │   ├── main.jsx
 │   └── index.css
-├── index.html                 → ទំព័រដើម
+├── index.html                   → ទំព័រដើម
 └── README.md
 ```
+
+---
+
+## 🛠️ Tech Stack
+
+| ប្រភេទ | ឧបករណ៍ |
+|---|---|
+| Framework | React 19 + Vite |
+| Styling | Tailwind CSS v4 |
+| State Management | Context API + useReducer |
+| Animation | Framer Motion |
+| Charts | Recharts |
+| Icons | Lucide React |
+| Testing | Vitest + React Testing Library |
+| Data Storage | Browser localStorage |
+| Internationalization | Custom EN/KH translation dictionary |
+| Code Quality | ESLint + Prettier |
 
 ---
 
@@ -109,7 +133,7 @@ savegoal/
    npm run dev
 ```
 4. បើក browser ទៅកាន់ `http://localhost:5173/`
-5. ចាប់ផ្តើមបង្កើត Goal ដំបូងរបស់អ្នក, deposit ប្រាក់, មើល Dashboard ។ល។
+5. ចាប់ផ្តើមបង្កើត Goal ដំបូងរបស់អ្នក, deposit ប្រាក់, ប្តូរភាសា, មើល Dashboard ។ល។
 
 ### Scripts ផ្សេងទៀត
 
@@ -118,7 +142,7 @@ npm run build          # Build production
 npm run preview        # មើល production build
 npm run lint           # ពិនិត្យកូដជាមួយ ESLint
 npm run format         # រៀបកូដជាមួយ Prettier
-npm run test           # រត់ unit tests (37 tests)
+npm run test           # រត់ unit tests
 npm run test:watch     # រត់ tests ក្នុង watch mode
 ```
 
@@ -132,14 +156,24 @@ npm run test
 
 ```
 ✓ src/utils/goalStatus.test.js            (15 tests)
-✓ src/utils/currency.test.js              (8 tests)
+✓ src/utils/currency.test.js              (16 tests)
 ✓ src/utils/sortGoals.test.js             (9 tests)
 ✓ src/components/ProgressBar.test.jsx     (3 tests)
 ✓ src/components/CategoryBadge.test.jsx   (2 tests)
 
 Test Files  5 passed (5)
-     Tests  37 passed (37)
+     Tests  45 passed (45)
 ```
+
+---
+
+## 🌐 Language Support
+
+Project នេះគាំទ្រភាសា **English** និង **ខ្មែរ** ពេញលេញ។ ចុចប៊ូតុង **EN / KH** នៅផ្នែកខាងលើស្តាំនៃ Header ដើម្បីប្តូរភាសា។ ជម្រើសភាសានឹងត្រូវបានចងចាំទុកសម្រាប់ការបើកលើកក្រោយ (localStorage key: `savegoal:language`)។
+
+## 💱 Currency Conversion
+
+Project គាំទ្ររូបិយប័ណ្ណ **USD** និង **KHR** ជាមួយអត្រាប្តូរថេរ **1 USD = 4,100 KHR**។ ពេលបញ្ចូលចំនួនទឹកប្រាក់ក្នុង Form ឬ Deposit/Withdraw នឹងបង្ហាញតម្លៃប្តូររូបិយប័ណ្ណដោយស្វ័យប្រវត្តិ (ឧ. `$500 → ≈ 2,050,000 ៛`)។
 
 ---
 
