@@ -35,7 +35,9 @@ export function sortGoals(goals, sortBy) {
 
     case 'newest':
     default: {
-      return copy.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      return copy.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
     }
   }
 }
@@ -44,4 +46,29 @@ export function searchGoals(goals, query) {
   const trimmed = query.trim().toLowerCase();
   if (!trimmed) return goals;
   return goals.filter((goal) => goal.name.toLowerCase().includes(trimmed));
+}
+
+/**
+ * តម្រៀប transaction (deposit/withdraw) របស់ Goal មួយ
+ * - 'default': លំដាប់ដើម (ថ្មីបំផុតនៅលើគេ ដូចដែលបានបញ្ចូលក្នុង state)
+ * - 'date': តាមកាលបរិច្ឆេទ ថ្មីបំផុតនៅលើគេ
+ * - 'amount': តាមចំនួនទឹកប្រាក់ ធំបំផុតនៅលើគេ
+ */
+export function sortTransactions(transactions, sortBy) {
+  const copy = [...transactions];
+
+  switch (sortBy) {
+    case 'date': {
+      return copy.sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+
+    case 'amount': {
+      return copy.sort((a, b) => b.amount - a.amount);
+    }
+
+    case 'default':
+    default: {
+      return copy;
+    }
+  }
 }
