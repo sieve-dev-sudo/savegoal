@@ -4,11 +4,11 @@ function ProgressBar({ progress, completed }) {
       <div
         className={`h-full rounded-full transition-[width] duration-500 ease-out ${
           completed
-            ? 'bg-green-500'
+            ? 'bg-lime-600'
             : progress >= 75
-              ? 'bg-indigo-500'
+              ? 'bg-lime-500'
               : progress >= 40
-                ? 'bg-indigo-400'
+                ? 'bg-lime-400'
                 : 'bg-indigo-300'
         }`}
         style={{ width: `${progress}%` }}
