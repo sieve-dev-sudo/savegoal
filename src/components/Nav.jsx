@@ -12,7 +12,7 @@ function Nav({ currentPage, onNavigate }) {
   return (
     <nav
       aria-label="Main navigation"
-      className="border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
+      className="border-b border-slate-700 bg-slate-800"
     >
       <div className="mx-auto flex max-w-4xl gap-1 px-2 sm:px-4">
         {TABS.map((tab) => {
@@ -24,13 +24,13 @@ function Nav({ currentPage, onNavigate }) {
               type="button"
               onClick={() => onNavigate(tab.id)}
               aria-current={active ? 'page' : undefined}
-              className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 px-2 py-2.5 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:flex-initial sm:px-4 ${
+              className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 px-2 py-2.5 text-sm font-medium sm:flex-initial sm:px-4 ${
                 active
-                  ? 'border-indigo-600 text-indigo-600 dark:border-indigo-400 dark:text-indigo-400'
-                  : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
+                  ? 'border-amber-400 text-amber-400'
+                  : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
-              <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+              <Icon className="h-4 w-4 shrink-0" />
               <span>{tab.label}</span>
             </button>
           );
