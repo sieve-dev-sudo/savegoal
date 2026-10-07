@@ -19,7 +19,14 @@ import ProgressBar from './ProgressBar';
 import CategoryBadge from './CategoryBadge';
 import SavingPaceInfo from './SavingPaceInfo';
 
-function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
+function GoalCard({
+  goal,
+  onEdit,
+  onDelete,
+  onTransact,
+  onViewHistory,
+  onOpen,
+}) {
   const { t } = useLanguage();
   const progress = getGoalProgress(goal);
   const completed = isGoalCompleted(goal);
@@ -36,7 +43,8 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, x: -40, transition: { duration: 0.15 } }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
-      className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800"
+      onClick={() => onOpen?.(goal)}
+      className="cursor-pointer rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
@@ -76,7 +84,10 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
         <div className="flex shrink-0 gap-0.5 sm:gap-1">
           <button
             type="button"
-            onClick={() => onViewHistory(goal)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewHistory(goal);
+            }}
             aria-label={`View transaction history for ${goal.name}`}
             className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700 sm:p-2"
           >
@@ -84,7 +95,10 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
           </button>
           <button
             type="button"
-            onClick={() => onTransact(goal)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onTransact(goal);
+            }}
             aria-label={`Deposit or withdraw for ${goal.name}`}
             className="rounded-lg p-1.5 text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/30 sm:p-2"
           >
@@ -92,7 +106,10 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
           </button>
           <button
             type="button"
-            onClick={() => onEdit(goal)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(goal);
+            }}
             aria-label={`Edit ${goal.name}`}
             className="rounded-lg p-1.5 text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30 sm:p-2"
           >
@@ -100,7 +117,10 @@ function GoalCard({ goal, onEdit, onDelete, onTransact, onViewHistory }) {
           </button>
           <button
             type="button"
-            onClick={() => onDelete(goal)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(goal);
+            }}
             aria-label={`Delete ${goal.name}`}
             className="rounded-lg p-1.5 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30 sm:p-2"
           >
