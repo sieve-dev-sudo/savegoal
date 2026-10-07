@@ -13,6 +13,7 @@ import TransactionHistoryModal from '../components/TransactionHistoryModal';
 import SearchBar from '../components/SearchBar';
 import SortDropdown from '../components/SortDropdown';
 import EmptyState from '../components/EmptyState';
+import GoalDetailPage from './GoalDetailPage';
 import { filterGoals, isGoalCompleted } from '../utils/goalStatus';
 import { searchGoals, sortGoals } from '../utils/sortGoals';
 import { fireGoalCompletedConfetti } from '../utils/confetti';
@@ -34,6 +35,7 @@ function GoalsPage() {
   const [deletingGoal, setDeletingGoal] = useState(null);
   const [transactingGoal, setTransactingGoal] = useState(null);
   const [historyGoalId, setHistoryGoalId] = useState(null);
+  const [openGoalId, setOpenGoalId] = useState(null);
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
@@ -108,6 +110,15 @@ function GoalsPage() {
     );
     setTransactingGoal(null);
   };
+
+  if (openGoalId) {
+    return (
+      <GoalDetailPage
+        goalId={openGoalId}
+        onBack={() => setOpenGoalId(null)}
+      />
+    );
+  }
 
   return (
     <section>
@@ -188,6 +199,7 @@ function GoalsPage() {
                 onDelete={setDeletingGoal}
                 onTransact={setTransactingGoal}
                 onViewHistory={(g) => setHistoryGoalId(g.id)}
+                onOpen={(g) => setOpenGoalId(g.id)}
               />
             ))}
           </AnimatePresence>
