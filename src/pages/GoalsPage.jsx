@@ -13,7 +13,7 @@ import TransactionHistoryModal from '../components/TransactionHistoryModal';
 import SearchBar from '../components/SearchBar';
 import SortDropdown from '../components/SortDropdown';
 import EmptyState from '../components/EmptyState';
-import GoalDetailPage from './GoalDetailPage';
+import GoalDetailModal from '../components/GoalDetailModal';
 import { filterGoals, isGoalCompleted } from '../utils/goalStatus';
 import { searchGoals, sortGoals } from '../utils/sortGoals';
 import { fireGoalCompletedConfetti } from '../utils/confetti';
@@ -110,15 +110,6 @@ function GoalsPage() {
     );
     setTransactingGoal(null);
   };
-
-  if (openGoalId) {
-    return (
-      <GoalDetailPage
-        goalId={openGoalId}
-        onBack={() => setOpenGoalId(null)}
-      />
-    );
-  }
 
   return (
     <section>
@@ -246,6 +237,15 @@ function GoalsPage() {
           <TransactionHistoryModal
             goal={historyGoal}
             onClose={() => setHistoryGoalId(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {openGoalId && (
+          <GoalDetailModal
+            goalId={openGoalId}
+            onClose={() => setOpenGoalId(null)}
           />
         )}
       </AnimatePresence>
