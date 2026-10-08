@@ -63,6 +63,9 @@ function GoalDetailModal({ goalId, onClose }) {
   const daysRemaining = getDaysRemaining(goal.deadline);
   const pace = getSavingPace(goal);
 
+  const hasFooterContent =
+    tab === 'goal' && (goal.deadline || pace || completed);
+
   const handleSaveEdit = (formData) => {
     editGoal(goal.id, formData);
     showToast(t.toast.goalUpdated, 'success');
@@ -101,7 +104,7 @@ function GoalDetailModal({ goalId, onClose }) {
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.2, ease: 'easeOut' }}
         onClick={(e) => e.stopPropagation()}
-        className="relative flex h-full w-full flex-col overflow-hidden bg-slate-100 dark:bg-slate-900 sm:h-[700px] sm:max-h-[92vh] sm:max-w-md sm:rounded-2xl"
+        className="relative flex h-full w-full flex-col overflow-hidden bg-slate-100 dark:bg-slate-900 sm:h-[580px] sm:max-h-[92vh] sm:max-w-md sm:rounded-2xl"
       >
         {/* ===== Header (ថេរ) ===== */}
         <div className="shrink-0 bg-slate-800 px-4 pb-0 pt-3 text-amber-400">
@@ -125,7 +128,7 @@ function GoalDetailModal({ goalId, onClose }) {
             </button>
           </div>
 
-          <div className="mt-3 flex justify-center gap-8 text-sm">
+          <div className="mt-2 flex justify-center gap-8 text-sm">
             <button
               type="button"
               onClick={() => setTab('goal')}
@@ -153,19 +156,19 @@ function GoalDetailModal({ goalId, onClose }) {
 
         {/* ===== Body (ពង្រីកពេញ + scroll បាន) ===== */}
         {tab === 'goal' ? (
-          <div className="flex-1 overflow-y-auto px-4 pb-6 pt-8">
+          <div className="flex-1 overflow-y-auto px-4 pb-5 pt-5">
             <div className="flex justify-center">
-              <CircularProgress progress={progress} />
+              <CircularProgress progress={progress} size={190} />
             </div>
 
-            <p className="mt-4 text-center text-xs font-medium uppercase tracking-widest text-slate-400">
+            <p className="mt-3 text-center text-xs font-medium uppercase tracking-widest text-slate-400">
               Saved
             </p>
             <p className="text-center text-3xl font-semibold text-slate-800 dark:text-slate-100">
               {formatCurrency(goal.currentAmount, goal.currency)}
             </p>
 
-            <div className="mt-6 flex items-start justify-between px-2">
+            <div className="mt-5 flex items-start justify-between px-2">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
                   Remaining
@@ -184,7 +187,7 @@ function GoalDetailModal({ goalId, onClose }) {
               </div>
             </div>
 
-            <div className="mt-6 flex justify-center">
+            <div className="mt-5 flex justify-center">
               <button
                 type="button"
                 onClick={() => setShowTransact(true)}
@@ -200,7 +203,7 @@ function GoalDetailModal({ goalId, onClose }) {
             <RecordSortDropdown value={recordSort} onChange={setRecordSort} />
 
             {sortedTransactions.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="flex flex-col items-center justify-center py-12 text-center">
                 <Inbox className="h-10 w-10 text-slate-300 dark:text-slate-600" />
                 <p className="mt-2 text-sm text-slate-400">{t.history.empty}</p>
               </div>
@@ -231,23 +234,27 @@ function GoalDetailModal({ goalId, onClose }) {
           </div>
         )}
 
-        {/* ===== Footer navy (ថេរ ទាំងពីរ tab) ===== */}
-        <div className="shrink-0 bg-slate-800 px-4 py-4 text-center text-white">
-          {tab === 'goal' ? (
+        {/* ===== Footer navy ===== */}
+        <div
+          className={`shrink-0 bg-slate-800 px-4 text-center text-white ${
+            hasFooterContent ? 'py-4' : 'py-3'
+          }`}
+        >
+          {tab === 'goal' && (
             <>
               {goal.deadline && (
                 <>
-                  <span className="inline-block rounded-full border border-slate-500 px-4 py-1.5 text-xs">
+                  <span className="inline-block rounded-full border border-slate-500 px-4 py-1 text-xs">
                     Target on {formatTargetDate(goal.deadline)}
                   </span>
-                  <p className="mt-2 text-sm font-medium text-amber-400">
+                  <p className="mt-1.5 text-sm font-medium text-amber-400">
                     {formatCountdown(daysRemaining)}
                   </p>
                 </>
               )}
 
               {pace && (
-                <div className="mt-4 flex justify-around text-sm">
+                <div className="mt-3 flex justify-around text-sm">
                   <div>
                     <p className="text-slate-400">Daily</p>
                     <p className="font-semibold">
@@ -274,12 +281,10 @@ function GoalDetailModal({ goalId, onClose }) {
                   🎉 {t.goalCard.completedMsg}
                 </p>
               )}
-
-              {!goal.deadline && !completed && <div className="h-6" />}
             </>
-          ) : (
-            <div className="h-6" />
           )}
+
+          {!hasFooterContent && <div className="h-2" />}
         </div>
       </motion.div>
 
