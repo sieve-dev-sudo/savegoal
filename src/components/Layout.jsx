@@ -7,7 +7,7 @@ function Layout({ currentPage, onNavigate, children }) {
     <div className="flex min-h-screen flex-col bg-slate-100 dark:bg-slate-900">
       <Header />
       <Nav currentPage={currentPage} onNavigate={onNavigate} />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-3 py-4 sm:px-4 sm:py-6">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-3 py-5 sm:px-6 sm:py-8">
         {children}
       </main>
       <ToastContainer />

@@ -11,6 +11,8 @@
 @layer base {
   html {
     color-scheme: light;
+    /* ពង្រីក UI ទាំងមូល: 100% = 16px, 112.5% = 18px, 125% = 20px */
+    font-size: 112.5%;
   }
 
   html.dark {
