@@ -14,7 +14,7 @@ function Nav({ currentPage, onNavigate }) {
       aria-label="Main navigation"
       className="border-b border-slate-700 bg-slate-800"
     >
-      <div className="mx-auto flex max-w-4xl gap-1 px-2 sm:px-4">
+      <div className="mx-auto flex max-w-6xl gap-1 px-2 sm:px-6">
         {TABS.map((tab) => {
           const Icon = tab.icon;
           const active = currentPage === tab.id;
@@ -24,13 +24,13 @@ function Nav({ currentPage, onNavigate }) {
               type="button"
               onClick={() => onNavigate(tab.id)}
               aria-current={active ? 'page' : undefined}
-              className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 px-2 py-2.5 text-sm font-medium sm:flex-initial sm:px-4 ${
+              className={`flex flex-1 items-center justify-center gap-2 border-b-2 px-3 py-3 text-base font-medium sm:flex-initial sm:px-5 ${
                 active
                   ? 'border-amber-400 text-amber-400'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
-              <Icon className="h-4 w-4 shrink-0" />
+              <Icon className="h-5 w-5 shrink-0" />
               <span>{tab.label}</span>
             </button>
           );
