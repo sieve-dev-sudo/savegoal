@@ -63,9 +63,6 @@ function GoalDetailModal({ goalId, onClose }) {
   const daysRemaining = getDaysRemaining(goal.deadline);
   const pace = getSavingPace(goal);
 
-  const hasFooterContent =
-    tab === 'goal' && (goal.deadline || pace || completed);
-
   const handleSaveEdit = (formData) => {
     editGoal(goal.id, formData);
     showToast(t.toast.goalUpdated, 'success');
@@ -106,7 +103,7 @@ function GoalDetailModal({ goalId, onClose }) {
         onClick={(e) => e.stopPropagation()}
         className="relative flex h-full w-full flex-col overflow-hidden bg-slate-100 dark:bg-slate-900 sm:h-[720px] sm:max-h-[94vh] sm:max-w-md sm:rounded-2xl"
       >
-        {/* ===== Header (ថេរ) ===== */}
+        {/* ===== Header ===== */}
         <div className="shrink-0 bg-slate-800 px-4 pb-0 pt-3 text-amber-400">
           <div className="flex items-center justify-between">
             <button
@@ -134,7 +131,7 @@ function GoalDetailModal({ goalId, onClose }) {
               onClick={() => setTab('goal')}
               className={`border-b-2 pb-2 font-medium tracking-wide ${
                 tab === 'goal'
-                  ? 'border-amber-400 text-amber-400'
+                  ? 'border-amber-400 text-white'
                   : 'border-transparent text-slate-400'
               }`}
             >
@@ -145,7 +142,7 @@ function GoalDetailModal({ goalId, onClose }) {
               onClick={() => setTab('records')}
               className={`border-b-2 pb-2 font-medium tracking-wide ${
                 tab === 'records'
-                  ? 'border-amber-400 text-amber-400'
+                  ? 'border-amber-400 text-white'
                   : 'border-transparent text-slate-400'
               }`}
             >
@@ -154,122 +151,85 @@ function GoalDetailModal({ goalId, onClose }) {
           </div>
         </div>
 
-        {/* ===== Body (ពង្រីកពេញ + scroll តែពេលចាំបាច់) ===== */}
         {tab === 'goal' ? (
-          <div className="flex flex-1 flex-col justify-center overflow-y-auto px-4 py-6">
-            <div className="flex justify-center">
-              <CircularProgress progress={progress} size={210} />
+          <>
+            {/* ===== Body ===== */}
+            <div className="flex flex-1 flex-col justify-center overflow-y-auto px-4 pb-9 pt-6">
+              <div className="flex justify-center">
+                <CircularProgress progress={progress} size={210} />
+              </div>
+
+              <p className="mt-3 text-center text-sm uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Saved
+              </p>
+              <p className="text-center text-3xl font-medium text-slate-800 dark:text-slate-100">
+                {formatCurrency(goal.currentAmount, goal.currency)}
+              </p>
+
+              <div className="mt-6 grid grid-cols-2 text-center">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    Remaining
+                  </p>
+                  <p className="text-xl font-medium text-slate-800 dark:text-slate-100">
+                    {formatCurrency(remaining, goal.currency)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    Goal
+                  </p>
+                  <p className="text-xl font-medium text-slate-800 dark:text-slate-100">
+                    {formatCurrency(goal.targetAmount, goal.currency)}
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <p className="mt-4 text-center text-xs font-medium uppercase tracking-widest text-slate-400">
-              Saved
-            </p>
-            <p className="text-center text-3xl font-semibold text-slate-800 dark:text-slate-100">
-              {formatCurrency(goal.currentAmount, goal.currency)}
-            </p>
-
-            <div className="mt-6 flex items-start justify-between px-2">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                  Remaining
-                </p>
-                <p className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                  {formatCurrency(remaining, goal.currency)}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                  Goal
-                </p>
-                <p className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                  {formatCurrency(goal.targetAmount, goal.currency)}
-                </p>
+            {/* ===== ប៊ូតុង Add saving ត្រួតលើបន្ទាត់ចែក ===== */}
+            <div className="relative z-10 h-0 shrink-0">
+              <div className="absolute inset-x-0 flex -translate-y-1/2 justify-center">
+                <button
+                  type="button"
+                  onClick={() => setShowTransact(true)}
+                  className="flex items-center gap-3 rounded-full bg-white px-7 py-3 text-base font-medium text-slate-800 shadow-lg hover:bg-slate-50 dark:bg-slate-700 dark:text-slate-100"
+                >
+                  <Plus className="h-5 w-5 text-indigo-600" />
+                  Add saving
+                </button>
               </div>
             </div>
 
-            <div className="mt-6 flex justify-center">
-              <button
-                type="button"
-                onClick={() => setShowTransact(true)}
-                className="flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-medium text-slate-800 shadow-md hover:bg-slate-50 dark:bg-slate-700 dark:text-slate-100"
-              >
-                <Plus className="h-4 w-4 text-indigo-600" />
-                Add saving
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="flex-1 overflow-y-auto bg-white px-4 py-4 dark:bg-slate-800">
-            <RecordSortDropdown value={recordSort} onChange={setRecordSort} />
-
-            {sortedTransactions.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
-                <Inbox className="h-10 w-10 text-slate-300 dark:text-slate-600" />
-                <p className="mt-2 text-sm text-slate-400">{t.history.empty}</p>
-              </div>
-            ) : (
-              <ul className="mt-3 space-y-2">
-                {sortedTransactions.map((tx) => (
-                  <li
-                    key={tx.id}
-                    className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3 dark:bg-slate-700/50"
-                  >
-                    <span className="text-sm text-slate-700 dark:text-slate-200">
-                      {formatDate(tx.date)}
-                    </span>
-                    <span
-                      className={`text-sm font-medium ${
-                        tx.type === 'deposit'
-                          ? 'text-green-600 dark:text-green-400'
-                          : 'text-red-600 dark:text-red-400'
-                      }`}
-                    >
-                      {tx.type === 'deposit' ? '' : '− '}
-                      {formatCurrency(tx.amount, goal.currency)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
-
-        {/* ===== Footer navy ===== */}
-        <div
-          className={`shrink-0 bg-slate-800 px-4 text-center text-white ${
-            hasFooterContent ? 'py-4' : 'py-3'
-          }`}
-        >
-          {tab === 'goal' && (
-            <>
+            {/* ===== Footer navy ===== */}
+            <div className="shrink-0 bg-slate-800 px-4 pb-5 pt-10 text-center text-white">
               {goal.deadline && (
                 <>
-                  <span className="inline-block rounded-full border border-slate-500 px-4 py-1 text-xs">
+                  <span className="inline-block rounded-md border border-slate-400 px-4 py-2 text-sm">
                     Target on {formatTargetDate(goal.deadline)}
                   </span>
-                  <p className="mt-1.5 text-sm font-medium text-amber-400">
+                  <p className="mt-2 text-sm text-amber-400">
                     {formatCountdown(daysRemaining)}
                   </p>
                 </>
               )}
 
               {pace && (
-                <div className="mt-3 flex justify-around text-sm">
+                <div className="mt-4 grid grid-cols-3 text-sm">
                   <div>
                     <p className="text-slate-400">Daily</p>
-                    <p className="font-semibold">
+                    <p className="text-base">
                       {formatCurrency(pace.perDay, goal.currency)}
                     </p>
                   </div>
                   <div>
                     <p className="text-slate-400">Weekly</p>
-                    <p className="font-semibold">
+                    <p className="text-base">
                       {formatCurrency(pace.perWeek, goal.currency)}
                     </p>
                   </div>
                   <div>
                     <p className="text-slate-400">Monthly</p>
-                    <p className="font-semibold">
+                    <p className="text-base">
                       {formatCurrency(pace.perMonth, goal.currency)}
                     </p>
                   </div>
@@ -281,11 +241,53 @@ function GoalDetailModal({ goalId, onClose }) {
                   🎉 {t.goalCard.completedMsg}
                 </p>
               )}
-            </>
-          )}
+            </div>
+          </>
+        ) : (
+          <>
+            {/* ===== Records ===== */}
+            <div className="flex-1 overflow-y-auto bg-white px-4 py-4 dark:bg-slate-800">
+              <RecordSortDropdown
+                value={recordSort}
+                onChange={setRecordSort}
+              />
 
-          {!hasFooterContent && <div className="h-2" />}
-        </div>
+              {sortedTransactions.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <Inbox className="h-10 w-10 text-slate-300 dark:text-slate-600" />
+                  <p className="mt-2 text-sm text-slate-400">
+                    {t.history.empty}
+                  </p>
+                </div>
+              ) : (
+                <ul className="mt-3 space-y-2">
+                  {sortedTransactions.map((tx) => (
+                    <li
+                      key={tx.id}
+                      className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3 dark:bg-slate-700/50"
+                    >
+                      <span className="text-sm text-slate-700 dark:text-slate-200">
+                        {formatDate(tx.date)}
+                      </span>
+                      <span
+                        className={`text-sm font-medium ${
+                          tx.type === 'deposit'
+                            ? 'text-green-600 dark:text-green-400'
+                            : 'text-red-600 dark:text-red-400'
+                        }`}
+                      >
+                        {tx.type === 'deposit' ? '' : '− '}
+                        {formatCurrency(tx.amount, goal.currency)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div className="h-12 shrink-0 bg-slate-800" />
+          </>
+        )}
       </motion.div>
 
       {showEdit && (
