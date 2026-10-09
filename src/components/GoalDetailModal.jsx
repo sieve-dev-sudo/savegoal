@@ -104,7 +104,7 @@ function GoalDetailModal({ goalId, onClose }) {
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.2, ease: 'easeOut' }}
         onClick={(e) => e.stopPropagation()}
-        className="relative flex h-full w-full flex-col overflow-hidden bg-slate-100 dark:bg-slate-900 sm:h-[580px] sm:max-h-[92vh] sm:max-w-md sm:rounded-2xl"
+        className="relative flex h-full w-full flex-col overflow-hidden bg-slate-100 dark:bg-slate-900 sm:h-[720px] sm:max-h-[94vh] sm:max-w-md sm:rounded-2xl"
       >
         {/* ===== Header (ថេរ) ===== */}
         <div className="shrink-0 bg-slate-800 px-4 pb-0 pt-3 text-amber-400">
@@ -154,21 +154,21 @@ function GoalDetailModal({ goalId, onClose }) {
           </div>
         </div>
 
-        {/* ===== Body (ពង្រីកពេញ + scroll បាន) ===== */}
+        {/* ===== Body (ពង្រីកពេញ + scroll តែពេលចាំបាច់) ===== */}
         {tab === 'goal' ? (
-          <div className="flex-1 overflow-y-auto px-4 pb-5 pt-5">
+          <div className="flex flex-1 flex-col justify-center overflow-y-auto px-4 py-6">
             <div className="flex justify-center">
-              <CircularProgress progress={progress} size={190} />
+              <CircularProgress progress={progress} size={210} />
             </div>
 
-            <p className="mt-3 text-center text-xs font-medium uppercase tracking-widest text-slate-400">
+            <p className="mt-4 text-center text-xs font-medium uppercase tracking-widest text-slate-400">
               Saved
             </p>
             <p className="text-center text-3xl font-semibold text-slate-800 dark:text-slate-100">
               {formatCurrency(goal.currentAmount, goal.currency)}
             </p>
 
-            <div className="mt-5 flex items-start justify-between px-2">
+            <div className="mt-6 flex items-start justify-between px-2">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
                   Remaining
@@ -187,7 +187,7 @@ function GoalDetailModal({ goalId, onClose }) {
               </div>
             </div>
 
-            <div className="mt-5 flex justify-center">
+            <div className="mt-6 flex justify-center">
               <button
                 type="button"
                 onClick={() => setShowTransact(true)}
@@ -203,7 +203,7 @@ function GoalDetailModal({ goalId, onClose }) {
             <RecordSortDropdown value={recordSort} onChange={setRecordSort} />
 
             {sortedTransactions.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="flex flex-col items-center justify-center py-16 text-center">
                 <Inbox className="h-10 w-10 text-slate-300 dark:text-slate-600" />
                 <p className="mt-2 text-sm text-slate-400">{t.history.empty}</p>
               </div>
