@@ -1,26 +1,33 @@
 import { useState } from 'react';
-import { X, Check } from 'lucide-react';
 import { CATEGORIES, CURRENCIES } from '../constants/categories';
-import { CATEGORY_COLOR_CLASSES } from '../constants/categoryColors';
 import { CURRENCY_SYMBOLS } from '../utils/currency';
 import { useLanguage } from '../context/LanguageContext';
+import { useGoals } from '../context/GoalContext';
+import { useToast } from '../context/ToastContext';
 import ModalOverlay from './ModalOverlay';
+import ConfirmDialog from './ConfirmDialog';
+import GoalThumbnail from './GoalThumbnail';
+import OutlinedField from './OutlinedField';
 import CurrencyConversionHint from './CurrencyConversionHint';
 
 function GoalFormModal({ initialData, onSave, onClose }) {
   const { t, isEnglish } = useLanguage();
+  const { deleteGoal } = useGoals();
+  const { showToast } = useToast();
   const isEditing = Boolean(initialData);
 
   const [name, setName] = useState(initialData?.name || '');
   const [targetAmount, setTargetAmount] = useState(
     initialData?.targetAmount ?? ''
   );
+  const [note, setNote] = useState(initialData?.note || '');
   const [deadline, setDeadline] = useState(initialData?.deadline || '');
   const [category, setCategory] = useState(
     initialData?.category || CATEGORIES[0].id
   );
   const [currency, setCurrency] = useState(initialData?.currency || 'USD');
   const [errors, setErrors] = useState({});
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const validate = () => {
     const newErrors = {};
@@ -52,169 +59,156 @@ function GoalFormModal({ initialData, onSave, onClose }) {
     onSave({
       name: name.trim(),
       targetAmount: Number(targetAmount),
+      note: note.trim(),
       deadline: deadline || null,
       category,
       currency,
     });
   };
 
+  const handleDelete = () => {
+    deleteGoal(initialData.id);
+    showToast(t.toast.goalDeleted, 'success');
+    onClose();
+  };
+
   return (
-    <ModalOverlay onClose={onClose} maxWidthClass="max-w-md">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+    <>
+      <ModalOverlay onClose={onClose} maxWidthClass="max-w-md">
+        <h3 className="text-center text-xl font-medium text-slate-900 dark:text-slate-100">
           {isEditing ? t.goalForm.titleEdit : t.goalForm.titleCreate}
         </h3>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close"
-          className="rounded-lg p-1 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700"
-        >
-          <X className="h-5 w-5" />
-        </button>
-      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-        <div>
-          <label
-            htmlFor="goal-name"
-            className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
-          >
-            {t.goalForm.name}
-          </label>
-          <input
-            id="goal-name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder={t.goalForm.namePlaceholder}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
-          />
-          {errors.name && (
-            <p className="mt-1 text-xs text-red-600">{errors.name}</p>
-          )}
-        </div>
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="-mx-1 mt-3 max-h-[70vh] space-y-4 overflow-y-auto px-1 pb-1 pt-3">
+            <div className="flex items-center justify-center gap-4">
+              <span className="text-sm text-slate-600 dark:text-slate-300">
+                {t.goalForm.imageLabel}
+              </span>
+              <GoalThumbnail size={56} />
+            </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label
-              htmlFor="goal-amount"
-              className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
-            >
-              {t.goalForm.targetAmount} ({CURRENCY_SYMBOLS[currency]})
-            </label>
-            <input
-              id="goal-amount"
-              type="number"
-              min="0"
-              step="0.01"
-              value={targetAmount}
-              onChange={(e) => setTargetAmount(e.target.value)}
-              placeholder="500"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+            <OutlinedField
+              id="goal-name"
+              label={t.goalForm.name}
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              error={errors.name}
             />
-            {errors.targetAmount && (
-              <p className="mt-1 text-xs text-red-600">
-                {errors.targetAmount}
-              </p>
-            )}
-            <CurrencyConversionHint
-              amount={targetAmount}
-              currency={currency}
-            />
-          </div>
 
-          <div>
-            <label
-              htmlFor="goal-currency"
-              className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+            <div>
+              <OutlinedField
+                id="goal-amount"
+                label={t.goalForm.targetAmount}
+                type="number"
+                min="0"
+                step="0.01"
+                value={targetAmount}
+                onChange={(e) => setTargetAmount(e.target.value)}
+                error={errors.targetAmount}
+              />
+              <CurrencyConversionHint
+                amount={targetAmount}
+                currency={currency}
+              />
+            </div>
+
+            <OutlinedField
+              id="goal-note"
+              label={t.goalForm.note}
+              type="text"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
+
+            <OutlinedField
+              id="goal-deadline"
+              label={t.goalForm.deadline}
+              type="date"
+              alwaysFloat
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              error={errors.deadline}
+            />
+
+            <OutlinedField
+              id="goal-category"
+              label={t.goalForm.category}
+              as="select"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
             >
-              {t.goalForm.currency}
-            </label>
-            <select
-              id="goal-currency"
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
-            >
-              {CURRENCIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
+              {CATEGORIES.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {isEnglish ? c.labelEn : c.label}
                 </option>
               ))}
-            </select>
-          </div>
-        </div>
+            </OutlinedField>
 
-        <div>
-          <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-            {t.goalForm.category}
-          </span>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {CATEGORIES.map((c) => {
-              const Icon = c.icon;
-              const colors = CATEGORY_COLOR_CLASSES[c.color];
-              const active = category === c.id;
-              return (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => setCategory(c.id)}
-                  className={`relative flex flex-col items-center gap-1 rounded-lg border p-2.5 text-xs transition-colors ${
-                    active
-                      ? `border-transparent ${colors.bg} ${colors.text} ring-2 ring-indigo-500`
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700'
-                  }`}
-                >
-                  {active && (
-                    <Check className="absolute right-1 top-1 h-3 w-3" />
-                  )}
-                  <Icon className={`h-4 w-4 ${active ? colors.icon : ''}`} />
-                  <span className="text-center leading-tight">
-                    {isEnglish ? c.labelEn : c.label}
-                  </span>
-                </button>
-              );
-            })}
+            <div className="flex items-center justify-between gap-3 rounded-md border border-slate-400 px-4 py-2 dark:border-slate-500">
+              <span className="text-base text-slate-700 dark:text-slate-200">
+                {t.goalForm.currency}
+              </span>
+              <div className="flex gap-1.5">
+                {CURRENCIES.map((c) => {
+                  const active = currency === c;
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setCurrency(c)}
+                      className={`rounded-md border px-4 py-2 text-sm font-medium ${
+                        active
+                          ? 'border-slate-400 bg-slate-200 text-cyan-800 dark:border-slate-500 dark:bg-slate-700 dark:text-cyan-300'
+                          : 'border-transparent text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700'
+                      }`}
+                    >
+                      {CURRENCY_SYMBOLS[c]} {c}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label
-            htmlFor="goal-deadline"
-            className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
-          >
-            {t.goalForm.deadline}
-          </label>
-          <input
-            id="goal-deadline"
-            type="date"
-            value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
-          />
-          {errors.deadline && (
-            <p className="mt-1 text-xs text-red-600">{errors.deadline}</p>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full border border-cyan-800 px-4 py-3 text-base font-medium text-cyan-800 hover:bg-cyan-50 dark:border-cyan-400 dark:text-cyan-300 dark:hover:bg-slate-700"
+            >
+              {t.goalForm.cancel}
+            </button>
+            <button
+              type="submit"
+              className="rounded-full bg-cyan-800 px-4 py-3 text-base font-medium text-white hover:bg-cyan-900 dark:bg-cyan-700 dark:hover:bg-cyan-600"
+            >
+              {t.goalForm.done}
+            </button>
+          </div>
+
+          {isEditing && (
+            <button
+              type="button"
+              onClick={() => setConfirmDelete(true)}
+              className="mt-3 w-full rounded-lg py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+            >
+              {t.goalForm.deleteGoal}
+            </button>
           )}
-        </div>
+        </form>
+      </ModalOverlay>
 
-        <div className="flex justify-end gap-2 pt-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
-          >
-            {t.goalForm.cancel}
-          </button>
-          <button
-            type="submit"
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-          >
-            {isEditing ? t.goalForm.save : t.goalForm.create}
-          </button>
-        </div>
-      </form>
-    </ModalOverlay>
+      {confirmDelete && (
+        <ConfirmDialog
+          title={t.confirm.deleteTitle}
+          message={t.confirm.deleteMessage(initialData.name)}
+          onConfirm={handleDelete}
+          onCancel={() => setConfirmDelete(false)}
+        />
+      )}
+    </>
   );
 }
 
