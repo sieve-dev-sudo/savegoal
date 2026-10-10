@@ -101,19 +101,13 @@ export function GoalProvider({ children }) {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state.goals));
     } catch (error) {
       console.error('Error writing goals to localStorage:', error);
-      if (error.name === 'QuotaExceededError') {
-        window.dispatchEvent(
-          new CustomEvent('savegoal:storage-error', {
-            detail: 'ទំហំផ្ទុកទិន្នន័យពេញហើយ។ Goal ថ្មីៗអាចនឹងមិនរក្សាទុក។',
-          })
-        );
-      } else {
-        window.dispatchEvent(
-          new CustomEvent('savegoal:storage-error', {
-            detail: 'មានបញ្ហាក្នុងការរក្សាទុកទិន្នន័យ។',
-          })
-        );
-      }
+      const message =
+        error.name === 'QuotaExceededError'
+          ? 'ទំហំផ្ទុកទិន្នន័យពេញហើយ។ Goal ថ្មីៗអាចនឹងមិនរក្សាទុក។'
+          : 'មានបញ្ហាក្នុងការរក្សាទុកទិន្នន័យ។';
+      window.dispatchEvent(
+        new CustomEvent('savegoal:storage-error', { detail: message })
+      );
     }
   }, [state.goals]);
 
@@ -126,6 +120,7 @@ export function GoalProvider({ children }) {
       deadline: goalData.deadline || null,
       category: goalData.category || 'other',
       currency: goalData.currency || 'USD',
+      note: goalData.note || '',
       createdAt: new Date().toISOString(),
       transactions: [],
     };
@@ -139,6 +134,10 @@ export function GoalProvider({ children }) {
 
   const deleteGoal = useCallback((id) => {
     dispatch({ type: 'DELETE_GOAL', payload: { id } });
+  }, []);
+
+  const setGoals = useCallback((goals) => {
+    dispatch({ type: 'SET_GOALS', payload: goals });
   }, []);
 
   const depositToGoal = useCallback((goalId, amount, note = '') => {
@@ -170,11 +169,14 @@ export function GoalProvider({ children }) {
     addGoal,
     editGoal,
     deleteGoal,
+    setGoals,
     depositToGoal,
     withdrawFromGoal,
   };
 
-  return <GoalContext.Provider value={value}>{children}</GoalContext.Provider>;
+  return (
+    <GoalContext.Provider value={value}>{children}</GoalContext.Provider>
+  );
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
