@@ -1,37 +1,35 @@
-import { PiggyBank, Moon, Sun } from 'lucide-react';
+import { Menu, Moon, Sun } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
-import LanguageToggle from './LanguageToggle';
 
-function Header() {
+function Header({ title, onMenu }) {
   const { isDark, toggleTheme } = useTheme();
   const { t } = useLanguage();
 
   return (
-    <header className="border-t-4 border-amber-500 bg-slate-800">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-3 py-3.5 sm:px-6">
-        <div className="flex items-center gap-2 sm:gap-2.5">
-          <PiggyBank className="h-7 w-7 text-amber-400 sm:h-8 sm:w-8" />
-          <h1 className="text-xl font-bold text-amber-400 sm:text-2xl">
-            {t.appName}
-          </h1>
-        </div>
+    <header className="bg-slate-800">
+      <div className="mx-auto grid max-w-3xl grid-cols-[3rem_1fr_3rem] items-center px-3 py-4">
+        <button
+          type="button"
+          onClick={onMenu}
+          aria-label={t.drawer.menu}
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-amber-400 hover:bg-slate-700"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
 
-        <div className="flex items-center gap-2.5">
-          <LanguageToggle />
-          <button
-            type="button"
-            onClick={toggleTheme}
-            aria-label={isDark ? t.theme.toLight : t.theme.toDark}
-            className="rounded-lg p-2 text-amber-400 hover:bg-slate-700"
-          >
-            {isDark ? (
-              <Sun className="h-6 w-6" />
-            ) : (
-              <Moon className="h-6 w-6" />
-            )}
-          </button>
-        </div>
+        <h1 className="truncate text-center text-xl text-amber-400">
+          {title}
+        </h1>
+
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label={isDark ? t.theme.toLight : t.theme.toDark}
+          className="flex h-10 w-10 items-center justify-center justify-self-end rounded-lg text-amber-400 hover:bg-slate-700"
+        >
+          {isDark ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
+        </button>
       </div>
     </header>
   );
