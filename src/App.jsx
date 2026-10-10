@@ -9,7 +9,7 @@ function App() {
   return (
     <Layout currentPage={currentPage} onNavigate={setCurrentPage}>
       {currentPage === 'goals' && <GoalsPage />}
-      {currentPage === 'dashboard' && <DashboardPage />}
+      {currentPage === 'statistics' && <DashboardPage />}
     </Layout>
   );
 }
