@@ -19,6 +19,12 @@ import DepositWithdrawModal from './DepositWithdrawModal';
 import RecordSortDropdown from './RecordSortDropdown';
 import { fireGoalCompletedConfetti } from '../utils/confetti';
 
+const PACE_ITEMS = [
+  { key: 'perDay', label: 'Daily' },
+  { key: 'perWeek', label: 'Weekly' },
+  { key: 'perMonth', label: 'Monthly' },
+];
+
 function formatTargetDate(dateStr) {
   if (!dateStr) return '';
   const d = new Date(dateStr);
@@ -40,7 +46,7 @@ function formatCountdown(days) {
 
 function GoalDetailModal({ goalId, onClose }) {
   const { goals, editGoal, depositToGoal, withdrawFromGoal } = useGoals();
-  const { t } = useLanguage();
+  const { t, isEnglish } = useLanguage();
   const { showToast } = useToast();
 
   const [tab, setTab] = useState('goal');
@@ -61,7 +67,18 @@ function GoalDetailModal({ goalId, onClose }) {
   const completed = isGoalCompleted(goal);
   const remaining = getRemainingAmount(goal);
   const daysRemaining = getDaysRemaining(goal.deadline);
-  const pace = getSavingPace(goal);
+
+  // Goal ដែលសម្រេចហើយ ត្រូវសន្សំ 0; បើគ្មាន deadline ឬហួសកាលកំណត់ គ្មានតម្លៃ (null)
+  const paceValues = completed
+    ? { perDay: 0, perWeek: 0, perMonth: 0 }
+    : getSavingPace(goal);
+
+  const noTargetLabel = isEnglish
+    ? 'No target date'
+    : 'មិនទាន់កំណត់កាលបរិច្ឆេទ';
+  const setTargetHint = isEnglish
+    ? 'Edit the goal to set a target date'
+    : 'កែ Goal ដើម្បីកំណត់កាលបរិច្ឆេទគោលដៅ';
 
   const handleSaveEdit = (formData) => {
     editGoal(goal.id, formData);
@@ -101,7 +118,7 @@ function GoalDetailModal({ goalId, onClose }) {
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.2, ease: 'easeOut' }}
         onClick={(e) => e.stopPropagation()}
-        className="relative flex h-full w-full flex-col overflow-hidden bg-slate-100 dark:bg-slate-900 sm:h-[720px] sm:max-h-[94vh] sm:max-w-md sm:rounded-2xl"
+        className="relative flex h-full w-full flex-col overflow-hidden bg-slate-100 dark:bg-slate-900 sm:h-[760px] sm:max-h-[94vh] sm:max-w-md sm:rounded-2xl"
       >
         {/* ===== Header ===== */}
         <div className="shrink-0 bg-slate-800 px-4 pb-0 pt-3 text-amber-400">
@@ -200,47 +217,50 @@ function GoalDetailModal({ goalId, onClose }) {
               </div>
             </div>
 
-            {/* ===== Footer navy ===== */}
+            {/* ===== Footer navy: បង្ហាញជានិច្ច ===== */}
             <div className="shrink-0 bg-slate-800 px-4 pb-5 pt-10 text-center text-white">
-              {goal.deadline && (
-                <>
-                  <span className="inline-block rounded-md border border-slate-400 px-4 py-2 text-sm">
-                    Target on {formatTargetDate(goal.deadline)}
-                  </span>
-                  <p className="mt-2 text-sm text-amber-400">
-                    {formatCountdown(daysRemaining)}
-                  </p>
-                </>
-              )}
+              <span
+                className={`inline-block rounded-md border px-4 py-2 text-sm ${
+                  goal.deadline
+                    ? 'border-slate-400 text-white'
+                    : 'border-slate-600 text-slate-400'
+                }`}
+              >
+                {goal.deadline
+                  ? `Target on ${formatTargetDate(goal.deadline)}`
+                  : noTargetLabel}
+              </span>
 
-              {pace && (
-                <div className="mt-4 grid grid-cols-3 text-sm">
-                  <div>
-                    <p className="text-slate-400">Daily</p>
-                    <p className="text-base">
-                      {formatCurrency(pace.perDay, goal.currency)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-slate-400">Weekly</p>
-                    <p className="text-base">
-                      {formatCurrency(pace.perWeek, goal.currency)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-slate-400">Monthly</p>
-                    <p className="text-base">
-                      {formatCurrency(pace.perMonth, goal.currency)}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {completed && (
+              {completed ? (
                 <p className="mt-2 text-sm font-medium text-green-400">
                   🎉 {t.goalCard.completedMsg}
                 </p>
+              ) : goal.deadline ? (
+                <p
+                  className={`mt-2 text-sm ${
+                    daysRemaining !== null && daysRemaining < 0
+                      ? 'text-red-400'
+                      : 'text-amber-400'
+                  }`}
+                >
+                  {formatCountdown(daysRemaining)}
+                </p>
+              ) : (
+                <p className="mt-2 text-sm text-slate-400">{setTargetHint}</p>
               )}
+
+              <div className="mt-4 grid grid-cols-3 text-sm">
+                {PACE_ITEMS.map((item) => (
+                  <div key={item.key}>
+                    <p className="text-slate-400">{item.label}</p>
+                    <p className="text-base">
+                      {paceValues
+                        ? formatCurrency(paceValues[item.key], goal.currency)
+                        : '—'}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           </>
         ) : (
