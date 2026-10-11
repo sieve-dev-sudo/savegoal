@@ -10,53 +10,57 @@ import { useGoals } from '../context/GoalContext';
 import { useLanguage } from '../context/LanguageContext';
 import {
   getSummaryStats,
-  getProgressChartData,
+  getOverallTotals,
+  getGoalRanking,
   getCategoryChartData,
+  getMonthlyActivity,
+  getRecentTransactions,
 } from '../utils/dashboardStats';
-import { formatCurrency } from '../utils/currency';
+import { getGoalProgress } from '../utils/goalStatus';
+import OverallProgressCard from '../components/OverallProgressCard';
 import StatCard from '../components/StatCard';
-import GoalProgressChart from '../components/GoalProgressChart';
+import SectionCard from '../components/SectionCard';
+import GoalRankingList from '../components/GoalRankingList';
+import MonthlyActivityChart from '../components/MonthlyActivityChart';
 import CategoryPieChart from '../components/CategoryPieChart';
+import RecentActivityList from '../components/RecentActivityList';
 import EmptyState from '../components/EmptyState';
 
 function DashboardPage() {
   const { goals } = useGoals();
-  const { t } = useLanguage();
+  const { t, isEnglish } = useLanguage();
 
   const stats = useMemo(() => getSummaryStats(goals), [goals]);
-  const progressChartData = useMemo(
-    () => getProgressChartData(goals),
-    [goals]
+  const totals = useMemo(() => getOverallTotals(goals), [goals]);
+  const ranking = useMemo(() => getGoalRanking(goals), [goals]);
+  const categoryData = useMemo(
+    () => getCategoryChartData(goals, isEnglish),
+    [goals, isEnglish]
   );
-  const categoryChartData = useMemo(
-    () => getCategoryChartData(goals),
-    [goals]
-  );
+  const monthly = useMemo(() => {
+    const locale = isEnglish ? 'en-US' : 'km-KH';
+    return getMonthlyActivity(goals, 6).map((month) => ({
+      ...month,
+      label: month.date.toLocaleDateString(locale, { month: 'short' }),
+    }));
+  }, [goals, isEnglish]);
+  const recent = useMemo(() => getRecentTransactions(goals, 5), [goals]);
 
   if (goals.length === 0) {
     return (
-      <section>
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-          {t.dashboard.title}
-        </h2>
-        <div className="mt-4">
-          <EmptyState
-            icon={PiggyBank}
-            title={t.goalsPage.emptyTitle}
-            description={t.dashboard.empty}
-          />
-        </div>
-      </section>
+      <EmptyState
+        icon={PiggyBank}
+        title={t.goalsPage.emptyTitle}
+        description={t.dashboard.empty}
+      />
     );
   }
 
   return (
-    <section>
-      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-        {t.dashboard.title}
-      </h2>
+    <div className="space-y-4">
+      <OverallProgressCard totals={totals} />
 
-      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard
           icon={Target}
           label={t.dashboard.totalGoals}
@@ -67,7 +71,7 @@ function DashboardPage() {
           icon={CheckCircle2}
           label={t.dashboard.completed}
           value={stats.completedGoals}
-          colorClass="bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-400"
+          colorClass="bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400"
         />
         <StatCard
           icon={TrendingUp}
@@ -83,87 +87,68 @@ function DashboardPage() {
         />
       </div>
 
-      <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-        <h3 className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-          {t.dashboard.totalSaved}
-        </h3>
-        <div className="flex flex-wrap gap-4">
-          {Object.entries(stats.totalsByCurrency).map(
-            ([currency, totals]) => (
-              <div key={currency}>
-                <p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                  {formatCurrency(totals.current, currency)}
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {t.dashboard.ofTarget} {formatCurrency(totals.target, currency)}
-                </p>
-              </div>
-            )
-          )}
-        </div>
-      </div>
-
-      <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-        <h3 className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-          {t.dashboard.progressChart}
-        </h3>
-        <GoalProgressChart data={progressChartData} />
-      </div>
-
-      <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-        <h3 className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-          {t.dashboard.categoryChart}
-        </h3>
-        <CategoryPieChart data={categoryChartData} />
-      </div>
-
-      {stats.nearingCompletion.length > 0 && (
-        <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-          <h3 className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-            {t.dashboard.nearingList}
-          </h3>
-          <ul className="space-y-1.5">
-            {stats.nearingCompletion.map((goal) => (
-              <li
-                key={goal.id}
-                className="flex items-center justify-between text-sm"
-              >
-                <span className="text-slate-700 dark:text-slate-300">
-                  {goal.name}
-                </span>
-                <span className="font-medium text-amber-600 dark:text-amber-400">
-                  {Math.round((goal.currentAmount / goal.targetAmount) * 100)}
-                  %
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
       {stats.overdueGoals.length > 0 && (
-        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-900/20">
-          <h3 className="mb-2 text-sm font-medium text-red-700 dark:text-red-300">
-            {t.dashboard.overdueList}
-          </h3>
-          <ul className="space-y-1.5">
+        <SectionCard tone="danger" title={t.dashboard.overdueList}>
+          <ul className="space-y-2">
             {stats.overdueGoals.map((goal) => (
               <li
                 key={goal.id}
                 className="flex items-center justify-between text-sm"
               >
-                <span className="text-slate-700 dark:text-slate-300">
+                <span className="truncate pr-3 text-slate-700 dark:text-slate-200">
                   {goal.name}
                 </span>
-                <span className="font-medium text-red-600 dark:text-red-400">
-                  Deadline: {goal.deadline}
+                <span className="shrink-0 font-medium text-red-600 dark:text-red-400">
+                  {t.dashboard.deadline}: {goal.deadline}
                 </span>
               </li>
             ))}
           </ul>
-        </div>
+        </SectionCard>
       )}
-    </section>
+
+      {stats.nearingCompletion.length > 0 && (
+        <SectionCard title={t.dashboard.nearingList}>
+          <ul className="space-y-2">
+            {stats.nearingCompletion.map((goal) => (
+              <li
+                key={goal.id}
+                className="flex items-center justify-between text-sm"
+              >
+                <span className="truncate pr-3 text-slate-700 dark:text-slate-200">
+                  {goal.name}
+                </span>
+                <span className="shrink-0 font-medium text-amber-600 dark:text-amber-400">
+                  {getGoalProgress(goal)}%
+                </span>
+              </li>
+            ))}
+          </ul>
+        </SectionCard>
+      )}
+
+      <SectionCard
+        title={t.dashboard.goalRanking}
+        hint={t.dashboard.goalRankingHint}
+      >
+        <GoalRankingList ranking={ranking} />
+      </SectionCard>
+
+      <SectionCard
+        title={t.dashboard.monthlyActivity}
+        hint={t.dashboard.monthlyHint}
+      >
+        <MonthlyActivityChart data={monthly} />
+      </SectionCard>
+
+      <SectionCard title={t.dashboard.categoryChart}>
+        <CategoryPieChart data={categoryData} total={stats.totalGoals} />
+      </SectionCard>
+
+      <SectionCard title={t.dashboard.recentActivity}>
+        <RecentActivityList items={recent} />
+      </SectionCard>
+    </div>
   );
 }
 
