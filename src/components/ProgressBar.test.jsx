@@ -17,9 +17,15 @@ describe('ProgressBar', () => {
     expect(bar).toHaveStyle({ width: '75%' });
   });
 
-  it('applies green color class when completed', () => {
+  it('applies the lime color class when completed', () => {
     render(<ProgressBar progress={100} completed={true} />);
     const bar = screen.getByRole('progressbar');
-    expect(bar.className).toContain('bg-green-500');
+    expect(bar.className).toContain('bg-lime-600');
+  });
+
+  it('does not use the completed color while still in progress', () => {
+    render(<ProgressBar progress={30} completed={false} />);
+    const bar = screen.getByRole('progressbar');
+    expect(bar.className).not.toContain('bg-lime-600');
   });
 });
