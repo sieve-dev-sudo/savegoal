@@ -1,32 +1,33 @@
 import { isGoalCompleted, getGoalProgress } from './goalStatus';
 import { getDaysRemaining } from './date';
 import { getCategory } from '../constants/categories';
+import { convertKhrToUsd } from './currency';
+
+function toPercent(current, target) {
+  if (target <= 0) return 0;
+  return Math.min(100, Math.max(0, Math.round((current / target) * 100)));
+}
+
+function toUsd(amount, currency) {
+  return currency === 'KHR' ? convertKhrToUsd(amount) : amount;
+}
+
+function monthKey(date) {
+  return `${date.getFullYear()}-${date.getMonth()}`;
+}
 
 /**
- * សរុបចំនួនសន្សំ, Goal ជិតសម្រេច, Goal យឺតយ៉ាវ
- * ចំណាំ: ចំនួនសរុបគណនាដោយញែកតាម currency ព្រោះ USD/KHR មិនអាចបូកបញ្ចូលគ្នាបាន
+ * ចំនួន Goal សរុប, សម្រេចហើយ, ជិតសម្រេច (70%-99%), ហួសកាលកំណត់
  */
 export function getSummaryStats(goals) {
   const totalGoals = goals.length;
   const completedGoals = goals.filter(isGoalCompleted).length;
-  const inProgressGoals = totalGoals - completedGoals;
 
-  const totalsByCurrency = {};
-  goals.forEach((goal) => {
-    if (!totalsByCurrency[goal.currency]) {
-      totalsByCurrency[goal.currency] = { current: 0, target: 0 };
-    }
-    totalsByCurrency[goal.currency].current += goal.currentAmount;
-    totalsByCurrency[goal.currency].target += goal.targetAmount;
-  });
-
-  // Goal ជិតសម្រេច: progress >= 70% ប៉ុន្តែមិនទាន់ 100%
   const nearingCompletion = goals.filter((goal) => {
     const progress = getGoalProgress(goal);
     return progress >= 70 && progress < 100;
   });
 
-  // Goal យឺតយ៉ាវ: hoursed deadline ហើយមិនទាន់សម្រេច
   const overdueGoals = goals.filter((goal) => {
     if (isGoalCompleted(goal)) return false;
     const days = getDaysRemaining(goal.deadline);
@@ -36,39 +37,133 @@ export function getSummaryStats(goals) {
   return {
     totalGoals,
     completedGoals,
-    inProgressGoals,
-    totalsByCurrency,
+    inProgressGoals: totalGoals - completedGoals,
     nearingCompletion,
     overdueGoals,
   };
 }
 
 /**
- * ទិន្នន័យសម្រាប់ Bar chart: ប្រៀបធៀបភាគរយ Goal នីមួយៗ
+ * សរុបសន្សំ/គោលដៅ ញែកតាមរូបិយប័ណ្ណ (USD មុន)
  */
-export function getProgressChartData(goals) {
-  return goals.map((goal) => ({
-    name: goal.name.length > 12 ? `${goal.name.slice(0, 12)}...` : goal.name,
-    fullName: goal.name,
-    progress: getGoalProgress(goal),
-  }));
+export function getOverallTotals(goals) {
+  const map = {};
+
+  goals.forEach((goal) => {
+    const currency = goal.currency || 'USD';
+    if (!map[currency]) {
+      map[currency] = { currency, current: 0, target: 0 };
+    }
+    map[currency].current += goal.currentAmount;
+    map[currency].target += goal.targetAmount;
+  });
+
+  return Object.values(map)
+    .map((item) => ({
+      ...item,
+      remaining: Math.max(0, item.target - item.current),
+      percent: toPercent(item.current, item.target),
+    }))
+    .sort((a, b) => {
+      if (a.currency === 'USD') return -1;
+      if (b.currency === 'USD') return 1;
+      return a.currency.localeCompare(b.currency);
+    });
 }
 
 /**
- * ទិន្នន័យសម្រាប់ Pie chart: ចំនួន Goal តាមប្រភេទ
+ * ចំណាត់ថ្នាក់ Goal តាមភាគរយ (ខ្ពស់ទៅទាប)
  */
-export function getCategoryChartData(goals) {
+export function getGoalRanking(goals) {
+  return goals
+    .map((goal) => ({
+      id: goal.id,
+      name: goal.name,
+      category: goal.category,
+      currency: goal.currency,
+      current: goal.currentAmount,
+      target: goal.targetAmount,
+      progress: getGoalProgress(goal),
+      completed: isGoalCompleted(goal),
+    }))
+    .sort((a, b) => b.progress - a.progress || a.name.localeCompare(b.name));
+}
+
+/**
+ * ចំនួន Goal តាមប្រភេទ សម្រាប់ Donut chart
+ */
+export function getCategoryChartData(goals, isEnglish = false) {
   const counts = {};
+
   goals.forEach((goal) => {
-    counts[goal.category] = (counts[goal.category] || 0) + 1;
+    const id = getCategory(goal.category).id;
+    counts[id] = (counts[id] || 0) + 1;
   });
 
-  return Object.entries(counts).map(([categoryId, count]) => {
-    const category = getCategory(categoryId);
-    return {
-      name: category.label,
-      value: count,
-      color: category.color,
-    };
+  const total = goals.length;
+
+  return Object.entries(counts)
+    .map(([id, count]) => {
+      const category = getCategory(id);
+      return {
+        id: category.id,
+        name: isEnglish ? category.labelEn : category.label,
+        value: count,
+        color: category.color,
+        percent: total > 0 ? Math.round((count / total) * 100) : 0,
+      };
+    })
+    .sort((a, b) => b.value - a.value);
+}
+
+/**
+ * ប្រាក់សន្សំសុទ្ធ (បញ្ចូល − ដក) ក្នុងមួយខែ គិតជាតម្លៃសមមូល USD
+ * ត្រឡប់ array តាមលំដាប់ពីខែចាស់ទៅថ្មី
+ */
+export function getMonthlyActivity(goals, monthsCount = 6, now = new Date()) {
+  const months = [];
+
+  for (let i = monthsCount - 1; i >= 0; i--) {
+    const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ key: monthKey(date), date, net: 0 });
+  }
+
+  const byKey = Object.fromEntries(months.map((m) => [m.key, m]));
+
+  goals.forEach((goal) => {
+    (goal.transactions || []).forEach((tx) => {
+      const bucket = byKey[monthKey(new Date(tx.date))];
+      if (!bucket) return;
+      const value = toUsd(tx.amount, goal.currency);
+      bucket.net += tx.type === 'deposit' ? value : -value;
+    });
   });
+
+  return months.map((m) => ({ ...m, net: Math.round(m.net * 100) / 100 }));
+}
+
+/**
+ * ប្រតិបត្តិការថ្មីៗពី Goal ទាំងអស់
+ */
+export function getRecentTransactions(goals, limit = 5) {
+  const all = [];
+
+  goals.forEach((goal) => {
+    (goal.transactions || []).forEach((tx) => {
+      all.push({
+        id: tx.id,
+        goalId: goal.id,
+        goalName: goal.name,
+        currency: goal.currency,
+        type: tx.type,
+        amount: tx.amount,
+        note: tx.note || '',
+        date: tx.date,
+      });
+    });
+  });
+
+  return all
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, limit);
 }
