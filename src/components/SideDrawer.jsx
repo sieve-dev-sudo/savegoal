@@ -4,6 +4,7 @@ import {
   X,
   Target,
   LayoutDashboard,
+  Trash2,
   Download,
   Upload,
   Languages,
@@ -12,9 +13,10 @@ import { useGoals } from '../context/GoalContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useToast } from '../context/ToastContext';
 import { exportGoalsToFile, parseBackupFile } from '../utils/backup';
+import { purgeExpired } from '../utils/trash';
 import LanguageToggle from './LanguageToggle';
 
-function DrawerItem({ icon: Icon, label, active, onClick }) {
+function DrawerItem({ icon: Icon, label, active, badge, onClick }) {
   return (
     <button
       type="button"
@@ -26,16 +28,23 @@ function DrawerItem({ icon: Icon, label, active, onClick }) {
       }`}
     >
       <Icon className="h-5 w-5 shrink-0 text-slate-500 dark:text-slate-400" />
-      <span>{label}</span>
+      <span className="flex-1">{label}</span>
+      {badge > 0 && (
+        <span className="rounded-full bg-slate-300 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-600 dark:text-slate-100">
+          {badge}
+        </span>
+      )}
     </button>
   );
 }
 
 function SideDrawer({ currentPage, onNavigate, onClose }) {
-  const { goals, setGoals } = useGoals();
+  const { goals, trash, setGoals } = useGoals();
   const { t } = useLanguage();
   const { showToast } = useToast();
   const fileInputRef = useRef(null);
+
+  const trashCount = purgeExpired(trash).length;
 
   const go = (page) => {
     onNavigate(page);
@@ -128,6 +137,13 @@ function SideDrawer({ currentPage, onNavigate, onClose }) {
             label={t.drawer.statistics}
             active={currentPage === 'statistics'}
             onClick={() => go('statistics')}
+          />
+          <DrawerItem
+            icon={Trash2}
+            label={t.drawer.trash}
+            active={currentPage === 'trash'}
+            badge={trashCount}
+            onClick={() => go('trash')}
           />
 
           <div className="mx-6 my-2 border-t border-slate-300 dark:border-slate-700" />
