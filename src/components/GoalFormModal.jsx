@@ -27,7 +27,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
   );
   const [currency, setCurrency] = useState(initialData?.currency || 'USD');
   const [errors, setErrors] = useState({});
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmTrash, setConfirmTrash] = useState(false);
 
   const validate = () => {
     const newErrors = {};
@@ -66,9 +66,9 @@ function GoalFormModal({ initialData, onSave, onClose }) {
     });
   };
 
-  const handleDelete = () => {
+  const handleMoveToTrash = () => {
     deleteGoal(initialData.id);
-    showToast(t.toast.goalDeleted, 'success');
+    showToast(t.toast.goalTrashed, 'success');
     onClose();
   };
 
@@ -191,7 +191,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
           {isEditing && (
             <button
               type="button"
-              onClick={() => setConfirmDelete(true)}
+              onClick={() => setConfirmTrash(true)}
               className="mt-3 w-full rounded-lg py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
             >
               {t.goalForm.deleteGoal}
@@ -200,12 +200,13 @@ function GoalFormModal({ initialData, onSave, onClose }) {
         </form>
       </ModalOverlay>
 
-      {confirmDelete && (
+      {confirmTrash && (
         <ConfirmDialog
-          title={t.confirm.deleteTitle}
-          message={t.confirm.deleteMessage(initialData.name)}
-          onConfirm={handleDelete}
-          onCancel={() => setConfirmDelete(false)}
+          title={t.confirm.trashTitle}
+          message={t.confirm.trashMessage(initialData.name)}
+          confirmLabel={t.confirm.moveToTrash}
+          onConfirm={handleMoveToTrash}
+          onCancel={() => setConfirmTrash(false)}
         />
       )}
     </>
