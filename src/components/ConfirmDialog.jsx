@@ -1,7 +1,7 @@
 import { useLanguage } from '../context/LanguageContext';
 import ModalOverlay from './ModalOverlay';
 
-function ConfirmDialog({ title, message, onConfirm, onCancel }) {
+function ConfirmDialog({ title, message, confirmLabel, onConfirm, onCancel }) {
   const { t } = useLanguage();
 
   return (
@@ -25,7 +25,7 @@ function ConfirmDialog({ title, message, onConfirm, onCancel }) {
           onClick={onConfirm}
           className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
         >
-          {t.confirm.delete}
+          {confirmLabel || t.confirm.delete}
         </button>
       </div>
     </ModalOverlay>
