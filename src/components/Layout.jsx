@@ -9,8 +9,12 @@ function Layout({ currentPage, onNavigate, children }) {
   const { t } = useLanguage();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const title =
-    currentPage === 'goals' ? t.nav.dashboard : t.nav.statistics;
+  const titles = {
+    goals: t.nav.dashboard,
+    statistics: t.nav.statistics,
+    trash: t.nav.trash,
+  };
+  const title = titles[currentPage] || t.nav.dashboard;
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-100 dark:bg-slate-900">
