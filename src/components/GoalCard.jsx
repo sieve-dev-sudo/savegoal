@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Trash2 } from 'lucide-react';
 import {
   getGoalProgress,
   isGoalCompleted,
@@ -11,7 +11,7 @@ import { useLanguage } from '../context/LanguageContext';
 import ProgressBar from './ProgressBar';
 import GoalThumbnail from './GoalThumbnail';
 
-function GoalCard({ goal, onOpen }) {
+function GoalCard({ goal, onOpen, onDelete }) {
   const { t } = useLanguage();
   const progress = getGoalProgress(goal);
   const completed = isGoalCompleted(goal);
@@ -27,12 +27,12 @@ function GoalCard({ goal, onOpen }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, x: -40, transition: { duration: 0.15 } }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
-      className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800"
+      className="flex items-stretch overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800"
     >
       <button
         type="button"
         onClick={() => onOpen(goal)}
-        className="flex w-full items-center gap-3 p-3.5 text-left hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cyan-700 dark:hover:bg-slate-700/40"
+        className="flex min-w-0 flex-1 items-center gap-3 p-3.5 text-left hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cyan-700 dark:hover:bg-slate-700/40"
       >
         <GoalThumbnail size={64} />
 
@@ -68,6 +68,16 @@ function GoalCard({ goal, onOpen }) {
             <span>{formatCurrency(remaining, goal.currency)}</span>
           </div>
         </div>
+      </button>
+
+      <button
+        type="button"
+        onClick={() => onDelete(goal)}
+        aria-label={`${t.goalForm.deleteGoal}: ${goal.name}`}
+        title={t.goalForm.deleteGoal}
+        className="flex w-12 shrink-0 items-center justify-center border-l border-slate-200 text-slate-400 hover:bg-red-50 hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-500 dark:border-slate-700 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+      >
+        <Trash2 className="h-5 w-5" />
       </button>
     </motion.li>
   );
