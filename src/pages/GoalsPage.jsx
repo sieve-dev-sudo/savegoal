@@ -7,6 +7,7 @@ import { useLanguage } from '../context/LanguageContext';
 import GoalFormModal from '../components/GoalFormModal';
 import GoalCard from '../components/GoalCard';
 import GoalDetailModal from '../components/GoalDetailModal';
+import ConfirmDialog from '../components/ConfirmDialog';
 import SearchBar from '../components/SearchBar';
 import SortDropdown from '../components/SortDropdown';
 import EmptyState from '../components/EmptyState';
@@ -14,12 +15,13 @@ import AddFab from '../components/AddFab';
 import { searchGoals, sortGoals } from '../utils/sortGoals';
 
 function GoalsPage() {
-  const { goals, addGoal } = useGoals();
+  const { goals, addGoal, deleteGoal } = useGoals();
   const { showToast } = useToast();
   const { t } = useLanguage();
 
   const [showForm, setShowForm] = useState(false);
   const [openGoalId, setOpenGoalId] = useState(null);
+  const [deletingGoal, setDeletingGoal] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
 
@@ -32,6 +34,12 @@ function GoalsPage() {
     addGoal(formData);
     showToast(t.toast.goalCreated, 'success');
     setShowForm(false);
+  };
+
+  const handleConfirmTrash = () => {
+    deleteGoal(deletingGoal.id);
+    showToast(t.toast.goalTrashed, 'success');
+    setDeletingGoal(null);
   };
 
   return (
@@ -85,6 +93,7 @@ function GoalsPage() {
                 key={goal.id}
                 goal={goal}
                 onOpen={(g) => setOpenGoalId(g.id)}
+                onDelete={setDeletingGoal}
               />
             ))}
           </AnimatePresence>
@@ -110,6 +119,18 @@ function GoalsPage() {
           <GoalDetailModal
             goalId={openGoalId}
             onClose={() => setOpenGoalId(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {deletingGoal && (
+          <ConfirmDialog
+            title={t.confirm.trashTitle}
+            message={t.confirm.trashMessage(deletingGoal.name)}
+            confirmLabel={t.confirm.moveToTrash}
+            onConfirm={handleConfirmTrash}
+            onCancel={() => setDeletingGoal(null)}
           />
         )}
       </AnimatePresence>
