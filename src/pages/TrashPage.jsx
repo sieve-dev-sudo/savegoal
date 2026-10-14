@@ -98,7 +98,7 @@ function TrashPage() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="opacity-60">
-                      <GoalThumbnail size={56} />
+                      <GoalThumbnail size={56} image={item.image} />
                     </div>
 
                     <div className="min-w-0 flex-1">

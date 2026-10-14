@@ -173,7 +173,11 @@ function GoalDetailModal({ goalId, onClose }) {
             {/* ===== Body ===== */}
             <div className="flex flex-1 flex-col justify-center overflow-y-auto px-4 pb-9 pt-6">
               <div className="flex justify-center">
-                <CircularProgress progress={progress} size={210} />
+                <CircularProgress
+                  progress={progress}
+                  size={210}
+                  image={goal.image}
+                />
               </div>
 
               <p className="mt-3 text-center text-sm uppercase tracking-wide text-slate-500 dark:text-slate-400">

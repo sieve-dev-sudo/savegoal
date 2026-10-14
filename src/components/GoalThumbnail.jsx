@@ -1,4 +1,17 @@
-function GoalThumbnail({ size = 76 }) {
+function GoalThumbnail({ size = 76, image }) {
+  if (image) {
+    return (
+      <img
+        src={image}
+        alt=""
+        width={size}
+        height={size}
+        className="shrink-0 rounded-full object-cover"
+        style={{ width: size, height: size }}
+      />
+    );
+  }
+
   return (
     <div
       className="relative shrink-0 overflow-hidden rounded-full bg-sky-300"
