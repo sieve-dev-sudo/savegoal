@@ -28,6 +28,25 @@ describe('parseBackupFile', () => {
     expect(goal.category).toBe('other');
     expect(goal.deadline).toBeNull();
     expect(goal.note).toBe('');
+    expect(goal.image).toBeNull();
+  });
+
+  it('keeps a valid image data URL', () => {
+    const image = 'data:image/jpeg;base64,AAAA';
+    const [goal] = parseBackupFile(JSON.stringify([{ ...baseGoal, image }]));
+    expect(goal.image).toBe(image);
+  });
+
+  it('drops images that are not image data URLs', () => {
+    const unsafe = [
+      'https://example.com/a.png',
+      'javascript:alert(1)',
+      'data:text/html;base64,AAAA',
+    ];
+    unsafe.forEach((image) => {
+      const [goal] = parseBackupFile(JSON.stringify([{ ...baseGoal, image }]));
+      expect(goal.image).toBeNull();
+    });
   });
 
   it('throws on invalid JSON', () => {
