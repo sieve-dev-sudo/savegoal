@@ -2,7 +2,7 @@ const SEGMENT_COLORS = ['#dc2626', '#ec4899', '#84cc16'];
 // ប្រវែង arc សរុប = 75% នៃរង្វង់ (ទុកចន្លោះ 25% នៅខាងក្រោម)
 const SWEEP = 0.75;
 
-function CircularProgress({ progress, size = 210 }) {
+function CircularProgress({ progress, size = 210, image }) {
   const safeProgress = Math.min(100, Math.max(0, progress));
   const strokeWidth = 8;
   const radius = (size - strokeWidth) / 2;
@@ -13,11 +13,22 @@ function CircularProgress({ progress, size = 210 }) {
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
-      {/* រូប illustration ខាងក្នុង */}
+      {/* រូបខាងក្នុង៖ រូបដែលអ្នកផ្ទុកឡើង ឬ illustration លំនាំដើម */}
       <div className="absolute inset-[16px] overflow-hidden rounded-full bg-[#6fcbe6]">
-        <div className="absolute left-[24%] top-[18%] h-[15%] w-[15%] rounded-full bg-[#e5a82e]" />
-        <div className="absolute bottom-0 left-[6%] h-[48%] w-[48%] bg-[#56744d] [clip-path:polygon(40%_0%,0%_100%,100%_100%)]" />
-        <div className="absolute bottom-0 right-[2%] h-[62%] w-[70%] bg-[#84a540] [clip-path:polygon(45%_0%,0%_100%,100%_100%)]" />
+        {image ? (
+          <img
+            src={image}
+            alt=""
+            className="h-full w-full object-cover"
+            draggable={false}
+          />
+        ) : (
+          <>
+            <div className="absolute left-[24%] top-[18%] h-[15%] w-[15%] rounded-full bg-[#e5a82e]" />
+            <div className="absolute bottom-0 left-[6%] h-[48%] w-[48%] bg-[#56744d] [clip-path:polygon(40%_0%,0%_100%,100%_100%)]" />
+            <div className="absolute bottom-0 right-[2%] h-[62%] w-[70%] bg-[#84a540] [clip-path:polygon(45%_0%,0%_100%,100%_100%)]" />
+          </>
+        )}
       </div>
 
       {/* Ring: ចាប់ផ្តើមពីជ្រុងខាងក្រោមឆ្វេង វិលតាមទ្រនិចនាឡិកា */}
