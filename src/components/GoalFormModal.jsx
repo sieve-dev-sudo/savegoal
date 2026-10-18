@@ -6,7 +6,7 @@ import { useGoals } from '../context/GoalContext';
 import { useToast } from '../context/ToastContext';
 import ModalOverlay from './ModalOverlay';
 import ConfirmDialog from './ConfirmDialog';
-import GoalThumbnail from './GoalThumbnail';
+import ImagePicker from './ImagePicker';
 import OutlinedField from './OutlinedField';
 import CurrencyConversionHint from './CurrencyConversionHint';
 
@@ -16,6 +16,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
   const { showToast } = useToast();
   const isEditing = Boolean(initialData);
 
+  const [image, setImage] = useState(initialData?.image || null);
   const [name, setName] = useState(initialData?.name || '');
   const [targetAmount, setTargetAmount] = useState(
     initialData?.targetAmount ?? ''
@@ -63,6 +64,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
       deadline: deadline || null,
       category,
       currency,
+      image,
     });
   };
 
@@ -81,12 +83,7 @@ function GoalFormModal({ initialData, onSave, onClose }) {
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="-mx-1 mt-3 max-h-[70vh] space-y-4 overflow-y-auto px-1 pb-1 pt-3">
-            <div className="flex items-center justify-center gap-4">
-              <span className="text-sm text-slate-600 dark:text-slate-300">
-                {t.goalForm.imageLabel}
-              </span>
-              <GoalThumbnail size={56} />
-            </div>
+            <ImagePicker value={image} onChange={setImage} />
 
             <OutlinedField
               id="goal-name"

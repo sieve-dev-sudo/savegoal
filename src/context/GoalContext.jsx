@@ -198,6 +198,7 @@ export function GoalProvider({ children }) {
       category: goalData.category || 'other',
       currency: goalData.currency || 'USD',
       note: goalData.note || '',
+      image: goalData.image || null,
       createdAt: new Date().toISOString(),
       transactions: [],
     };

@@ -34,7 +34,7 @@ function GoalCard({ goal, onOpen, onDelete }) {
         onClick={() => onOpen(goal)}
         className="flex min-w-0 flex-1 items-center gap-3 p-3.5 text-left hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cyan-700 dark:hover:bg-slate-700/40"
       >
-        <GoalThumbnail size={64} />
+        <GoalThumbnail size={64} image={goal.image} />
 
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-3">

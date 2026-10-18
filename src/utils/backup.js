@@ -1,3 +1,5 @@
+import { isImageDataUrl } from './image';
+
 export function exportGoalsToFile(goals) {
   const data = {
     app: 'savegoal',
@@ -47,5 +49,7 @@ export function parseBackupFile(text) {
     category: g.category || 'other',
     deadline: g.deadline || null,
     note: g.note || '',
+    // ទទួលតែ data URL នៃរូបភាព (ការពារតំណមិនទុកចិត្ត)
+    image: isImageDataUrl(g.image) ? g.image : null,
   }));
 }
