@@ -1,11 +1,18 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/kantumruy-pro';
 
 /* Dark mode គ្រប់គ្រងដោយ class "dark" លើ <html> */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Breakpoint បន្ថែមសម្រាប់ទូរស័ព្ទតូចបំផុត */
 @theme {
+  /* Breakpoint បន្ថែមសម្រាប់ទូរស័ព្ទតូចបំផុត */
   --breakpoint-xs: 400px;
+
+  /* Inter សម្រាប់ឡាតាំង/លេខ, Kantumruy Pro សម្រាប់ខ្មែរ */
+  --font-sans:
+    'Inter Variable', 'Kantumruy Pro Variable', ui-sans-serif, system-ui,
+    sans-serif;
 }
 
 @layer base {
