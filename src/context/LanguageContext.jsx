@@ -1,4 +1,4 @@
-import { createContext, useContext, useCallback } from 'react';
+import { createContext, useContext, useCallback, useEffect } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { translations } from '../constants/translations';
 
@@ -6,6 +6,10 @@ const LanguageContext = createContext(null);
 
 export function LanguageProvider({ children }) {
   const [language, setLanguage] = useLocalStorage('savegoal:language', 'kh');
+
+  useEffect(() => {
+    document.documentElement.lang = language === 'kh' ? 'km' : 'en';
+  }, [language]);
 
   const toggleLanguage = useCallback(() => {
     setLanguage((prev) => (prev === 'kh' ? 'en' : 'kh'));
